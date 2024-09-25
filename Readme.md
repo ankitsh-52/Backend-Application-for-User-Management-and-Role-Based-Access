@@ -62,16 +62,16 @@ This project is a comprehensive backend application built using Node.js, Express
     npm install
 
 3. **Create a .env file in the root directory and add the following environment variables:**
-    PORT=8000
-    MONGODB_URI=
-    ACCESS_TOKEN_SECRET=
-    ACCESS_TOKEN_EXPIRY=1h
-    REFRESH_TOKEN_SECRET=
-    REFRESH_TOKEN_EXPIRY=1d
-    CLOUDINARY_CLOUD_NAME=
-    CLOUDINARY_API_KEY=
-    CLOUDINARY_SECRET_KEY=
-    CORS_ORIGIN=*
+    - PORT=8000
+    - MONGODB_URI=
+    - ACCESS_TOKEN_SECRET=
+    - ACCESS_TOKEN_EXPIRY=1h
+    - REFRESH_TOKEN_SECRET=
+    - REFRESH_TOKEN_EXPIRY=1d
+    - CLOUDINARY_CLOUD_NAME=
+    - CLOUDINARY_API_KEY=
+    - CLOUDINARY_SECRET_KEY=
+    - CORS_ORIGIN=*
 
 4. **Run the application:**
     cd src
