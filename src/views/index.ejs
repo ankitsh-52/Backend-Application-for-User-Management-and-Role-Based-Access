@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>All Videos are </h1>
+    <% for(let user of allUsers) { %>
+        <div>
+            <h2>
+                <p> <%= user.username %> </p>
+                <p> <%= user.fullName %> </p>
+                <p> <%= user.email %> </p>
+            </h2>
+        </div>
+        <hr>
+    <% } %>
+</body>
+</html>
