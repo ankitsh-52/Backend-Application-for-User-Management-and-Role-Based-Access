@@ -36,7 +36,9 @@ const generateAccessAndRefreshTokens = async ( userId ) => {
         return { accessToken, refreshToken };
 
     } catch ( error ) {
-        throw new ApiError( 500, "Something went wrong while generating tokens" )
+        // throw new ApiError( 500, "Something went wrong while generating tokens" )
+        let { statusCode, message } = new ApiError ( 500, "Something went wrong while generating tokens" );
+        res.render( "error.ejs", { statusCode, message } );
     }
 }
 
@@ -53,7 +55,9 @@ const registerUser = asyncHandler(async(req, res) => {
 
     //checking for valid field entry.
     if (!fullName || !email || !username || !password) {
-        throw new ApiError(400, "All fields (full name, email, username, and password) are required.");
+        // throw new ApiError(400, "All fields (full name, email, username, and password) are required.");
+        let { statusCode, message } = new ApiError ( 400, "All fields (full name, email, username, and password) are required." );
+        res.render( "error.ejs", { statusCode, message } );
     }
     
     //Checking for existed user.
@@ -62,7 +66,11 @@ const registerUser = asyncHandler(async(req, res) => {
         $or: [ { username }, { email } ]
     } )
 
-    if( existedUser ) { throw new ApiError( 409, "User already exists" )};
+    if( existedUser ){ 
+        // throw new ApiError( 409, "User already exists" )
+        let { statusCode, message } = new ApiError ( 409, "User already exists" );
+        res.render( "error.ejs", { statusCode, message } );
+    };
 
     // upload avatar and cover image
     //TODO console.log(req.files)
@@ -93,7 +101,11 @@ const registerUser = asyncHandler(async(req, res) => {
 
     //* ?.(Optional chaining):This ensures that if req.files or avatar[0] is undefined or null, it won't throw an error. It will simply return undefined. This is useful for avoiding crashes when certain fields might not exist.
 
-    if( !avatarLocalPath ){ throw new ApiError( 400, "Avatar file is missing" ) }
+    if( !avatarLocalPath ){ 
+        // throw new ApiError( 400, "Avatar file is missing" ) 
+        let { statusCode, message } = new ApiError ( 400, "Avatar file is missing" );
+        res.render( "error.ejs", { statusCode, message } );
+    }
 
     //Upload on cloudinary
     const avatar = await uploadOnCloudinary ( avatarLocalPath );
@@ -101,7 +113,9 @@ const registerUser = asyncHandler(async(req, res) => {
     const coverImage = await uploadOnCloudinary ( coverImageLocalPath );
 
     if( !avatar ) {  // avoid DB crash if avatar is not present.
-        throw new ApiError( 400, "Avatar is required" );
+        // throw new ApiError( 400, "Avatar is required" );
+        let { statusCode, message } = new ApiError ( 400, "Avatar is required" );
+        res.render( "error.ejs", { statusCode, message } );
     }
 
     const user = await User.create 
@@ -126,7 +140,9 @@ const registerUser = asyncHandler(async(req, res) => {
     );
 
     if(!createdUser){
-        throw new ApiError (500, "Error while user registration")
+        // throw new ApiError (500, "Error while user registration")
+        let { statusCode, message } = new ApiError ( 500, "Error while user registration" );
+        res.render( "error.ejs", { statusCode, message } );
     }
 
     //TODO understand its use, 2 status codes.
@@ -161,18 +177,23 @@ const loginUser = asyncHandler( async ( req, res ) => {
     const { email, username, password } = req.body;
     if( !( username || email ) )
     {
-        throw new ApiError ( 400, "username or email is required" );
+        // throw new ApiError ( 400, "username or email is required" );
+        let { statusCode, message } = new ApiError ( 400, "username or email is required" );
+        res.render( "error.ejs", { statusCode, message } );
     }
 
     const userExist = await User.findOne( { $or : [ { email }, { username } ] } );
     if( !userExist ) {
-        throw new ApiError ( 404, "User doesn't exists" );
+        let { statusCode, message } = new ApiError ( 404, "User doesn't exists" );
+        return res.render( "error.ejs", { statusCode, message } );
     };
 
     //! The custom methods written in the models file must be use on instances of User i.e userExist as these methods are for instances not from the mongoose.
     const isPasswordValid =  await userExist.isPasswordCorrect( password );
     if( !isPasswordValid ) {
-        throw new ApiError ( 401, "Password incorrect" );
+        // throw new ApiError ( 401, "Password incorrect" );
+        let { statusCode, message } = new ApiError ( 401, "Password Incorrect" );
+        res.render( "error.ejs", { statusCode, message } );
     };
 
     const { accessToken, refreshToken } =  await generateAccessAndRefreshTokens ( userExist._id ); // Here await is used as inside this method DB operations are happening.
@@ -211,7 +232,9 @@ const loginUser = asyncHandler( async ( req, res ) => {
 const getCurrentUser = asyncHandler( async( req, res ) => {
     let user = req.user;
     if (!user) {
-        throw new ApiError ( 404, "User not found" );
+        // throw new ApiError ( 404, "User not found" );
+        let { statusCode, message } = new ApiError ( 404, "User not found" );
+        res.render( "error.ejs", { statusCode, message } );
     }
     res.render( "user.ejs", { user } )
 });
@@ -259,7 +282,9 @@ const refreshAccessToken = asyncHandler( async( req, res ) => {
     const incomingRefreshToken = req.cookies.refreshToken || req.body.refreshToken; // req.body.refreshToken is for mobile
 
     if( !refreshAccessToken ){
-        throw new ApiError ( 401, "Unauthorized request" );
+        // throw new ApiError ( 401, "Unauthorized request" );
+        let { statusCode, message } = new ApiError ( 401, "Unauthorized request" );
+        res.render( "error.ejs", { statusCode, message } );
     }
 
     try {
@@ -271,7 +296,9 @@ const refreshAccessToken = asyncHandler( async( req, res ) => {
         const user = User.findById( { _id : decodedToken._id } );
     
         if( !user ){
-            throw new ApiError ( 400, "invalid request" );
+            // throw new ApiError ( 400, "invalid request" );
+            let { statusCode, message } = new ApiError ( 400, "Invalid request" );
+            res.render( "error.ejs", { statusCode, message } );
         }
     
         if( decodedToken !== user.refreshToken ){
@@ -298,7 +325,9 @@ const refreshAccessToken = asyncHandler( async( req, res ) => {
             )
         )
     } catch (error) {
-        throw new ApiError ( 401,  "**Invalid Refresh Token");
+        // throw new ApiError ( 401,  "Invalid Refresh Token");
+        let { statusCode, message } = new ApiError ( 401, "Invalid Refresh Token" );
+        res.render( "error.ejs", { statusCode, message } );
     }
 
 });

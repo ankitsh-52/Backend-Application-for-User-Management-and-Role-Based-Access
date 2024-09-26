@@ -1,20 +1,76 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register USer</title>
-</head>
+<% layout("/layouts/boilerplate") %>
 <body>
-    <h1>Welcome! Please Register Here</h1>
-    <form action="/register" method="post" enctype="multipart/form-data"><br><br>
-        <input type="text" placeholder="Full name" name="fullName"><br><br>
-        <input type="text" placeholder="Username" name="username"><br><br>
-        <input type="email" name="email" placeholder="Email"><br><br>
-        <input type="password" name="password" placeholder="password" pas><br><br>
-        <input type="file" name="avatar" ><br><br>
-        <input type="file" name="coverImage"><br><br>
-        <button type="submit">Register</button>
-    </form>
+    <h1 class="offset-2">Welcome Please Register Here</h1>
+    <div class="col-8 offset-2">
+        <form action="/register" method="post" class="needs-validation" novalidate enctype="multipart/form-data" ><br><br>
+            <div class="mb-3">
+                <label for="fullName" class="form-label">Fullname</label>
+                <input 
+                type="text" 
+                placeholder="Enter fullname" 
+                name="fullName"
+                class="form-control"
+                required
+                />
+                <!-- <div class="valid-feedback">Fullname</div> -->
+                <div class="invalid-feedback">Please enter fullname</div>
+            </div>
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input 
+                type="text" 
+                placeholder="Enter username" 
+                name="username"
+                class="form-control"
+                required
+                />
+                <div class="invalid-feedback">Please enter username</div>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input 
+                type="email" 
+                name="email" 
+                placeholder="Enter email"
+                class="form-control"
+                required
+                />
+                <div class="invalid-feedback">Please enter email correctly</div>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input 
+                type="password" 
+                name="password" 
+                placeholder="Enter password" 
+                class="form-control"
+                required
+                />
+                <div class="invalid-feedback">Please enter password</div>
+            </div>
+            <div class="row">
+                <div class="mb-3 col-md-6">
+                    <label for="avatar" class="form-label">Select avatar</label>
+                    <input 
+                    type="file" 
+                    name="avatar"
+                    class="form-control"
+                    placeholder="Select avatar"
+                    required
+                    />
+                    <div class="invalid-feedback">Please select an avatar</div>
+                </div>
+                <div class="mb-3 col-md-6">
+                    <label for="coverImage" class="form-label">Select cover image</label>
+                    <input 
+                    type="file" 
+                    name="coverImage"
+                    class="form-control"
+                    placeholder="Select cover image"
+                    />
+                </div>
+            </div>
+            <button type="submit" class="btn btn-dark">Register</button>
+        </form>
+    </div>
 </body>
-</html>

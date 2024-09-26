@@ -1,16 +1,32 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-</head>
+<% layout("/layouts/boilerplate") %>
 <body>
-    <h1>Login: </h1>
-    <form action="/login" method="post">
-        <input type="text" placeholder="enter username or email" name="username">
-        <input type="password" placeholder="password" name="password">
-        <button type="submit">Login</button>
-    </form>
+    <div class="col-4 offset-4">
+        <h1>Login: </h1>
+
+        <form action="/login" method="post" class="needs-validation" novalidate>
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input 
+                type="text" 
+                placeholder="Enter username or email" 
+                name="username"
+                class="form-control"
+                required
+                />
+                <div class="invalid-feedback">Please enter username or email</div>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input 
+                type="password" 
+                name="password" 
+                placeholder="Enter password" 
+                class="form-control"
+                required
+                />
+                <div class="invalid-feedback">Please enter password</div>
+            </div>
+            <button type="submit" class="btn btn-dark">Login</button>
+        </form>
+    </div>
 </body>
-</html>

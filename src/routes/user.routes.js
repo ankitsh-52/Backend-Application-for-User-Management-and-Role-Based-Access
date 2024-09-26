@@ -28,6 +28,7 @@ router.route("/register").post(upload.fields
 //Secured Routes
 router.route("/login/user").get(loggedInUser);
 router.route("/login").post(loginUser); 
+    
 router.route("/currentUser").get(verifyJWT, getCurrentUser);
 //Logout route
 router.route( "/logout" ).post( verifyJWT, logoutUser );

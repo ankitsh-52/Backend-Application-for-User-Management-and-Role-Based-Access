@@ -4,6 +4,8 @@ import cors from "cors";
 import { configDotenv } from "dotenv";
 import path from "path";
 import { fileURLToPath } from "url";
+import ejsMate from "ejs-mate";
+import flash from "connect-flash";
 
 const app = express();
 configDotenv();
@@ -14,6 +16,7 @@ const __dirname = path.dirname(__filename);
 
 // Set the view engine to ejs
 app.set("view engine", "ejs");
+app.engine( "ejs", ejsMate );
 // Define the location of the views folder
 // app.set("views", path.join(__dirname, "views"));
 
@@ -25,8 +28,17 @@ app.use(cors({  //TODO understand cors.
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static("public"));
-// app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "public")));
 app.use(cookieParser());
+// app.use(flash());
+
+// app.use( (req, res, next) => {
+//     res.locals.success = req.flash("success");
+// } );
+
+// app.use( ( err, req, res, next ) => {
+//     res.send("Something wrong")
+// } )
 
 //Routes import
 import userRouter from "./routes/user.routes.js";
