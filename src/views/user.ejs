@@ -1,31 +1,110 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Document </title>
-</head>
-<body>
-    <h1>Welcome  </h1>
-    <img src= <%= user.avatar %> alt="radha ji" height="200px" width="200px">
-    <p> email: <%= user.email %> </p>
-</body>
-</html> -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> <%= user.fullName %> </title>
+    <title> <%= user.username %> Profile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/user.styles.css">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+    <link 
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
+        rel="stylesheet" 
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" 
+        crossorigin="anonymous"
+    />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"     
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 <body>
-    <h1>Welcome : <%= user.fullName %> </h1>
-    <p> Email is: <%= user.email %> </p>
-    <img src="<%= user.avatar %>" alt="User Avatar" height="200px" width="200px">
+    <%- include("./includes/navbar2.ejs") %>
 
-    <form action="/logout" method="POST">
-        <button type="submit">Logout</button>
-    </form>
+    <!--* Main Content -->
+    <main id="main-content">
+        <!--* Cover Image -->
+        <div class="cover-image">
+            <img src="<%= user.coverImage %>" alt="Cover Image">
+            <!--* Avatar -->
+            <div class="avatar">
+                <img src="<%= user.avatar %>" alt="Avatar">
+            </div>
+        </div>
+
+        <!--* User Info -->
+        <div class="d-flex flex-column align-items-start ms-5">
+            <h3 class="mt-4"> <%= user.username %> </h3>
+            <p class="text-muted">Some bio or user details</p>
+            <form action="/user/toggleFollow/<%= user._id %>" method="POST">
+                <% if( !currUser ) { %>
+                    <button type="submit" class="btn btn-outline-dark mx-2 squared-pill d-flex align-items-center">
+                        Follow
+                    </button>
+                <% } else { %>
+                    <% if(( user._id.toString() !== currUser._id.toString() )) { %>
+                        <% let followed = subscribedData.find(data => {
+                            return (
+                                ( user._id.toString() === data.subscribedTo._id.toString() ) &&
+                                ( data.subscribedBy._id.toString() === currUser._id.toString() )
+                            )
+                        }) %>
+                        <% if(followed) { %>
+                            <button type="submit" class="btn btn-outline-dark mx-2 squared-pill d-flex align-items-center">
+                                Following
+                            </button>
+                        <% } else { %>
+                            <button type="submit" class="btn btn-outline-dark mx-2 squared-pill d-flex align-items-center">
+                                Follow
+                            </button>
+                        <% } %>
+                    <% } %>
+                <% } %>
+            </form>
+        </div>
+        <hr>
+        <!--* Dashboard -->
+        <div class="dashboard">
+            <h4>Dashboard</h4>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">Statistics</h5>
+                            <p class="card-text">View your activity statistics</p>
+                            <a href="#" class="btn btn-primary">View Stats</a>
+                        </div>
+                    </div>
+                </div>
+                <!--* PHOTO BUTTON -->
+                <div class="col-md-4">
+                    <div class="card mb-4 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title">Photos</h5>
+                            <p class="card-text">Check out your uploaded photos</p>
+                            <!-- <a href="/user/photos" class="btn btn-primary">View Photos</a> -->
+                            <a href="/<%= user.username %>/photo" class="btn btn-primary">View Photos</a>
+                        </div>
+                    </div>
+                </div>
+                <!--* SETTING BUTTON -->
+                <% if( (currUser) && (currUser._id.toString() === user._id.toString())){ %>
+                    <div class="col-md-4">
+                        <div class="card mb-4 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">Settings</h5>
+                                <p class="card-text">Manage your account settings</p>
+                                <a href="/updateAccountDetailsPage" class="btn btn-primary">Edit Settings</a>
+                            </div>
+                        </div>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </main>
+    <!-- <//%- include("./includes/footer.ejs") %> -->
+    <!-- Bootstrap validation and other features -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

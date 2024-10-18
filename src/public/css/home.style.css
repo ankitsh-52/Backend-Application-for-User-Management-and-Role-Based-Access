@@ -1,0 +1,162 @@
+/* General body styling */
+body {
+    font-family: "Fredoka", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    font-variation-settings: "wdth" 100;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    transition: margin-left 0.3s ease; /* Animation for content shifting */
+}
+
+body.shifted {
+    margin-left: 250px; /* Shift the content when the sidebar is active */
+}
+
+.container {
+    flex: 1;
+}
+
+/* Cards */
+.card {
+    border: none !important;
+    margin-bottom: 2rem;
+}
+
+.card-img-top {
+    border-radius: 1rem !important;
+    width: 100% !important;
+    object-fit: cover !important;
+}
+
+.card-body {
+    padding: 0 !important;
+}
+
+.card-text {
+    font-weight: 400;
+}
+
+.card-img-overlay {
+    opacity: 0;
+}
+
+.card-img-overlay:hover {
+    opacity: 0.2;
+    background-color: white;
+}
+
+/* Navbar */
+/* .navbar {
+    height: 4rem;
+    background-color: rgb(224, 230, 234);
+    z-index: 3000; Ensure the navbar is above the sidebar
+    position: fixed;
+    top: 0; Stick to the top
+    width: 100%; Span the full width of the page
+    left: 0; Align it with the left of the screen
+    border-bottom: 1px solid #ccc;
+} */
+
+.fa-user {
+    color: #000000;
+    font-size: 2rem;
+}
+
+/* .nav-link {
+    color: #222222 !important; Override Bootstrap color
+    font-size: 2rem;
+} */
+
+/* Footer */
+.f-info-links a {
+    text-decoration: none;
+    color: #222222;
+}
+
+.f-info-links a:hover {
+    text-decoration: underline;
+    color: #222222;
+}
+
+.f-info-links,
+.f-info-brand,
+.f-info-socials {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.f-info-socials i {
+    margin-left: 1rem;
+    font-size: 1.2rem;
+}
+
+.f-info {
+    text-align: center;
+    height: 6rem;
+    background-color: rgb(224, 230, 234);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: space-evenly;
+}
+
+button[form] {
+    margin-top: 1rem;
+}
+
+/* Hamburger Menu */
+#sidebar-wrapper {
+    position: fixed;
+    width: 250px;
+    height: 100%; /* Sidebar takes full height */
+    background-color: #202020;
+    overflow-x: hidden;
+    transition: all 0.3s ease;
+    z-index: 1000;
+    left: -250px;
+    top: 4rem; /* Start below the navbar */
+}
+
+#sidebar-wrapper.active {
+    left: 0;
+}
+
+#sidebar-wrapper .sidebar-nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#sidebar-wrapper .sidebar-nav li {
+    padding: 20px 20px;
+}
+
+#sidebar-wrapper .sidebar-nav li a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    font-size: 18px;
+}
+
+#sidebar-wrapper .sidebar-nav li a i {
+    margin-right: 10px;
+}
+
+main {
+    margin-top: 4rem; /* Push content below the navbar */
+    transition: margin-left 0.3s ease;
+    margin-left: 0;
+}
+
+#sidebar-wrapper.active + main {
+    margin-left: 250px;
+}
+
+.sidebar-toggle {
+    cursor: pointer;
+}

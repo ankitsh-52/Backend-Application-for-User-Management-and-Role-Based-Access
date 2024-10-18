@@ -20,19 +20,24 @@ const verifyJWT = asyncHandler( async( req, res, next ) => {
     >>req.header("Authorization")?.replace("Bearer ", "") gets the token by first checking if the Authorization header is present (again using optional chaining ?.).
     */
     
-    //Here the req can access the cookie as we have injected the cookie-parser MW.
     const token = req.cookies?.accessToken || req.header( "Authorization" )?.replace( "Bearer ", "" ) 
     if(!token){
-            throw new ApiError( 401, "Unauthorized request");
+            res.redirect( "/login" );
         }
-    const decodedToken = jwt.verify( token, process.env.ACCESS_TOKEN_SECRET )   //jwt method
+    const decodedToken = jwt.verify( token, process.env.ACCESS_TOKEN_SECRET )
     
-    //here we used _id because in the generateAccessToken method we have used that name only.
-    const user = await User.findById( decodedToken?._id, { password : 0, refreshToken : 0 } )  
+    const user = await User.findById( decodedToken?._id, { password : 0, refreshToken : 0 } );
     if( !user ){
         //Todo discuss about frontend
         throw new ApiError( 401, "Invalid Access Token" )
+        // res.redirect( "/login/user" );
     }
+    // res.locals.currUser = user; // to use in ejs template.
+
+    if(user) {
+        res.locals.currentUser = user;
+    }
+
     req.user = user;   
     // req.user: This creates a new property on the req object named user.
     //By setting req.user to the user object, you're essentially making the user's data available to the rest of your request handling pipeline. This is often used for authorization, personalization, or other tasks that require information about the authenticated user.
@@ -40,7 +45,9 @@ const verifyJWT = asyncHandler( async( req, res, next ) => {
     next();
     } 
     catch (error) {
-        throw new ApiError( 401, error?.message || "Invalid access token" );
+        // throw new ApiError( 401, error?.message || "Invalid access token" );
+        let { statusCode, message } = new ApiError ( 401, "You are logged out" );
+        return res.render( "error.ejs", { statusCode, message } );
     }
 });
 

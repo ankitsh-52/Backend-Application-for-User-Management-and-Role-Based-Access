@@ -1,0 +1,28 @@
+.navbar{
+  /* height: 4rem; */
+  min-height: 4rem;
+}
+
+.nav-link{
+  color: black !important;
+}
+
+img{
+  height: 35px;
+  width: 35px;
+}
+
+.material-symbols-outlined {
+  font-variation-settings:
+  'FILL' 0,
+  'wght' 400,
+  'GRAD' 0,
+  'opsz' 24
+}
+
+.icon-circle {
+  width: 50px; /* Set the size you want */
+  height: 50px;
+  border-radius: 50%; /* This makes the image a circle */
+  object-fit: cover; /* Ensures the image fits inside the circle */
+}

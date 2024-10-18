@@ -1,0 +1,54 @@
+<% layout("/layouts/boilerplate") %>
+
+<!-- FANCY BOX CDN -->
+<link rel="stylesheet" href="/css/user.photos.styles.css">
+<link
+rel="stylesheet"
+href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css"/>
+
+    <body>
+        <!-- Main Content -->
+        <!-- <h1>User Photos</h1> -->
+        <div class="grid-gallery">
+            <% for(let photo of photos) { %>
+                <!-- <img  alt=""> -->
+                <div class="grid-item">
+                    <a
+                        data-fancybox="gallery"
+                        data-src="<%= photo.imageFile %>"
+                        data-caption=" <%= photo.description %> ">
+                        <img 
+                            src = "<%= photo.imageFile %>"
+                        />
+                    </a>
+                    
+                    <!-- Bootstrap-based overlay for user info -->
+                    <div class="user-info-overlay d-flex flex-column justify-content-end">
+                        <a 
+                            href="/<%= photo.owner.username %>" 
+                            class="text-white text-decoration-none p-2">
+                            <span class="username-overlay"> <%= photo.owner.username %> </span>
+                        </a>
+                    </div>
+                </div> 
+            <% } %>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
+        <script>
+            Fancybox.bind('[data-fancybox]', 
+            {
+                on: {
+                        done: (fancybox, slide) => {
+                            if (fancybox.isCurrentSlide(slide)) {
+                                console.log(`The content of the current slide #${slide.index} is loaded and revealed`);
+                            } else {
+                                console.log(`The content of the slide #${slide.index} is preloaded and revealed`);
+                        }
+                    },
+                },
+            });
+        </script>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- <script src="/js/hamburger.script.js"></script> -->
+    </body>

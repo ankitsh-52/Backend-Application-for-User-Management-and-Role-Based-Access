@@ -1,0 +1,99 @@
+/* Global styles */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f8f9fa;
+    overflow-x: hidden;
+}
+
+#sidebar-wrapper {
+    position: fixed;
+    width: 250px;
+    height: 100%;
+    background-color: #202020;
+    overflow-x: hidden;
+    transition: all 0.3s ease;
+    z-index: 1000;
+    left: -250px;
+}
+
+#sidebar-wrapper.active {
+    left: 0;
+}
+
+#sidebar-wrapper .sidebar-nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#sidebar-wrapper .sidebar-nav li {
+    padding: 20px 20px;
+}
+
+#sidebar-wrapper .sidebar-nav li a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    font-size: 18px;
+}
+
+#sidebar-wrapper .sidebar-nav li a i {
+    margin-right: 10px;
+}
+
+main {
+    transition: margin-left 0.3s ease;
+    margin-left: 0;
+}
+
+#sidebar-wrapper.active + main {
+    margin-left: 250px;
+}
+
+#main-content {
+    padding: 20px;
+}
+
+.sidebar-toggle {
+    cursor: pointer;
+}
+
+/* Cover Image */
+.cover-image {
+    height: 250px;
+    position: relative;
+    background-color: #ddd;
+    margin-bottom: 100px;
+}
+
+.cover-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border: 2px solid black;
+}
+
+/* Avatar */
+.avatar {
+    position: absolute;
+    bottom: -75px;
+    left: 30px;
+    /* border: 5px solid white; */
+}
+
+.avatar img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    border: 2px solid black;
+}
+
+/* Dashboard */
+.dashboard .card {
+    border-radius: 15px;
+    transition: transform 0.3s ease;
+}
+
+.dashboard .card:hover {
+    transform: translateY(-5px);
+}

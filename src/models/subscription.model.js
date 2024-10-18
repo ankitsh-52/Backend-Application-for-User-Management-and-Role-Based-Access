@@ -1,16 +1,16 @@
 import mongoose, { Schema } from "mongoose";
 
-/* subscriberUser: makes it clear that this field represents the user who is doing the subscribing.
+/* subscribedBy: makes it clear that this field represents the user who is doing the subscribing.
 subscribedTo: clearly indicates that this field represents the user who is being followed or subscribed to.
 */
 
 const subscriptionSchema = new Schema({
     subscribedBy: {
-        type: Schema.Types.ObjectId, //The user who is subscribing to someone else.
+        type: Schema.Types.ObjectId, //The user who is subscribing to you.
         ref: "User"
     },
-    channel: {
-        type: SchemA.Types.ObjectId, //The user being subscribed to
+    subscribedTo: {
+        type: Schema.Types.ObjectId, //The user you are subscribing
         ref: "User"
     },
 }, { timestamps : true } )

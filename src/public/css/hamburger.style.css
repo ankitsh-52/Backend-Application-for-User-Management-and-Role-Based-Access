@@ -1,0 +1,49 @@
+/* Sidebar styles */
+#sidebar-wrapper {
+    position: fixed;
+    width: 250px;
+    height: 100%;
+    background-color: #202020;
+    overflow-x: hidden;
+    transition: all 0.3s ease;
+    z-index: 1000;
+    left: -250px;
+}
+
+#sidebar-wrapper.active {
+    left: 0;
+}
+
+#sidebar-wrapper .sidebar-nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#sidebar-wrapper .sidebar-nav li {
+    padding: 20px 20px;
+}
+
+#sidebar-wrapper .sidebar-nav li a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    font-size: 18px;
+}
+
+#sidebar-wrapper .sidebar-nav li a i {
+    margin-right: 10px;
+}
+
+main {
+    transition: margin-left 0.3s ease;
+    margin-left: 0;
+}
+
+#sidebar-wrapper.active + main {
+    margin-left: 250px;
+}
+
+.sidebar-toggle {
+    cursor: pointer;
+}

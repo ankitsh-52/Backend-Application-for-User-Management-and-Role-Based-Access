@@ -1,3 +1,8 @@
+package-lock.json
 node_modules
 .env
-package-lock.json
+.vscode
+lightbox
+responsive-navbar
+user2.html
+checkIfLoggedOut.middleware

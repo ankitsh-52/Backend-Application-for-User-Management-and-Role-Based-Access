@@ -3,16 +3,21 @@ import mongoose, { Schema } from "mongoose";
 const commentSchema = new mongoose.Schema({
     content: {
         type: String,
-        required: true,
+        // required: true,
     },
-    video: {
+    image: {
         type: Schema.Types.ObjectId,
-        ref: "Video"
+        ref: "Image"
     },
     owner: {
         type: Schema.Types.ObjectId,
         ref: "User",
-    }
+    },
+    rating: {
+        type: Number,
+        min: 1,
+        max: 5,
+    },
 }, { timestamps: true });
 
 export const Comment = mongoose.model( "Comment", commentSchema );

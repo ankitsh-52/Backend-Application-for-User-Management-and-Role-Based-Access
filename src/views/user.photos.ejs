@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+    <title></title>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="/css/user.styles.css">
+        <!-- ADDING FANCYAPPS -->
+        <link rel="stylesheet" href="/css/user.photos.styles.css">
+        <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.css"/>
+    </head>
+    <body>
+        <%- include("./includes/navbar2.ejs") %>
+
+        <!--* Main Content -->
+        <h1>User Photos</h1>
+        <div class="grid-gallery">
+            <% for(let photo of photos) { %>
+                <!-- <img  alt=""> -->
+                <div class="grid-item">
+                    <a
+                        data-fancybox="gallery"
+                        data-src="<%= photo.imageFile %>"
+                        data-caption=" <%= photo.description %> ">
+                        <img 
+                            src = "<%= photo.imageFile %>"
+                        />
+                    </a>
+                    
+                    <!--* Bootstrap-based overlay for user info -->
+                    <!-- <div class="user-info-overlay d-flex flex-column justify-content-end">
+                        <a 
+                            href="/<//%= photo.owner.username %>" 
+                            class="text-white text-decoration-none p-2">
+                            <span class="username-overlay"> <//%= photo.owner.username %> </span>
+                        </a>
+                    </div> -->
+                    <div class="col mt-3">
+                        <div class="user-info-overlay d-flex flex-column justify-content-end">
+                            <div class="d-flex align-items-center">
+                                <!--* PROFILE ICON -->
+                                <a 
+                                    href="/<%= photo.owner.username %>" 
+                                    class="text-white text-decoration-none p-2">
+                                    <button type="submit" class="btn btn-outline-light mx-2 rounded-pill d-flex align-items-center">
+                                        <i class="fa-solid fa-circle-user fa-lg"></i>&nbsp;<%= photo.owner.username %>
+                                    </button>
+                                </a>
+                                <!--* COMMENT ICON -->
+                                <form action="/images/<%= photo._id %>/comments" method="GET">
+                                    <!-- Added margin to the left -->
+                                    <button type="submit" class="ms-2" style="background: none; border: none; padding: 0;">
+                                        <i class="fa-regular fa-comment fa-lg" style="color: white;"></i>
+                                    </button>
+                                </form>
+                                <!--* LIKE ICON -->
+                                <form action="/image/toggleLike/<%= photo._id %>" method="POST">
+                                    <button type="submit" 
+                                        style="background: none; border: none; padding: 0;"
+                                    >
+                                        <% if (loggedInUserLikeData && currUser) { %>
+                                            <% let liked = loggedInUserLikeData.find(data => {
+                                                return data.likedBy.toString() === currUser._id.toString() && 
+                                                        photo._id.toString() === data.imageLiked.toString();
+                                            }); %>
+                                        
+                                            <% if (liked) { %>
+                                                <i class="fa-solid fa-heart fa-xl ms-4" style="color: #ff0000;"></i>
+                                            <% } else { %>
+                                                <i class="fa-solid fa-heart fa-xl ms-4" style="color: white;"></i>
+                                            <% } %>
+                                        <% } else { %>
+                                            <!-- Handle the case where either loggedInUserLikeData or currUser is not present -->
+                                            <i class="fa-solid fa-heart fa-xl ms-4 like-icon" style="color: white;"></i>
+                                        <% } %>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/@fancyapps/ui@5.0/dist/fancybox/fancybox.umd.js"></script>
+        <script>
+            Fancybox.bind('[data-fancybox]', 
+            {
+                on: {
+                        done: (fancybox, slide) => {
+                            if (fancybox.isCurrentSlide(slide)) {
+                                console.log(`The content of the current slide #${slide.index} is loaded and revealed`);
+                            } else {
+                                console.log(`The content of the slide #${slide.index} is preloaded and revealed`);
+                        }
+                    },
+                },
+            });
+        </script>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>

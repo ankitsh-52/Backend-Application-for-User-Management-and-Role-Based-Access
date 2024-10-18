@@ -1,0 +1,8 @@
+<% layout("/layouts/boilerplate") %>
+<body>
+    <form action= "/coverImage?_method=PATCH" method="POST" enctype="multipart/form-data">
+        <label for="coverImage" class="form-label">Change Cover Image</label><br>
+        <input type="file" name="coverImage" id="coverImage" class="form-control" required><br>
+        <button type="submit" class="btn btn-dark" >Submit</button>
+    </form>
+</body>

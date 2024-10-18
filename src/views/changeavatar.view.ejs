@@ -1,0 +1,8 @@
+<% layout("/layouts/boilerplate") %>
+<body>
+    <form action= "/avatar?_method=PATCH" method="POST" enctype="multipart/form-data">
+        <label for="avatar" class="form-label">Change avatar</label><br>
+        <input type="file" name="avatar" id="avatar" class="form-control" required><br>
+        <button type="submit" class="btn btn-dark" >Submit</button>
+    </form>
+</body>
