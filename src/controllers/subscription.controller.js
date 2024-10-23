@@ -47,6 +47,21 @@ const toggleSubscription = asyncHandler(async(req, res) => {
     }
 });
 
+const getUserFollowerChannel = asyncHandler( async(req, res) => {
+    let user = req.user;
+    console.log("Checking subscription user", user);
+    if(user){
+        let followerData = await Subscription.find({ subscribedTo : user._id }, { subscribedBy : 1 }).countDocuments({ subscribedTo : user._id });
+        console.log("User Follower data: ", followerData);
+    }
+} );
+
+const getUserFollowingChannels = asyncHandler( async(req, res) => {
+
+} )
+
 export {
     toggleSubscription,
+    getUserFollowingChannels,
+    getUserFollowerChannel
 }

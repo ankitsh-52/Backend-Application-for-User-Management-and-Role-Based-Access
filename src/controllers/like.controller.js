@@ -11,7 +11,7 @@ import { Image } from "../models/image.model.js";
 
 const toggleImageLike = asyncHandler(async(req, res) => {
     let { id } = req.params;
-    console.log("Image which is liked its id ",id);
+    // console.log("Image which is liked its id ",id);
     let user = req.user;
     if(!user) {
         let { statusCode, message } = new ApiError ( 400, "Please Login" );

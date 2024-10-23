@@ -22,10 +22,13 @@ import {
     updateUserAvatar,
     avatarUpdatePage,
     coverImageUpdatePage,
-    updateCoverImage, } from  "../controllers/user.controller.js";
+    updateCoverImage,
+    homePage2,
+    followersListModal } from  "../controllers/user.controller.js";
 
 const router = Router();
 router.route("/").get(currentUserCheck, homePage );
+router.route("/homePage").get(currentUserCheck, homePage2 );
 
 router.route("/register").get( registrationPage );
 router.route("/otp").get( sendOtpPage );
@@ -54,5 +57,6 @@ router.route("/coverImage").get(coverImageUpdatePage);
 router.route("/coverImage").patch(checkIfLoggedIn, upload.single("coverImage"), updateCoverImage);
 
 router.route("/:username").get(publicProfilePage);
+router.route("/:username/followers").get(checkIfLoggedIn, followersListModal);
 
 export  default router;

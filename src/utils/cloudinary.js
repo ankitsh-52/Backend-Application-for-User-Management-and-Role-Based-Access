@@ -1,7 +1,6 @@
 import { v2 as cloudinary } from "cloudinary";
 import { configDotenv } from "dotenv";
-// import { response } from "express";
-import fs from "fs";    //It is available in node & used to manage files 
+import fs from "fs";
 
 configDotenv();
 cloudinary.config({ 
@@ -35,10 +34,8 @@ const uploadOnCloudinary = async (localFilePath) => {
 
 const deleteOnCloudinary = async(imgPublicId) => {
     try {
-        if( !imgPublicId) return null;
-            const response = await cloudinary.uploader.destroy(imgPublicId, {
-            // resource_type : "auto",
-        });
+        if( !imgPublicId ) return null;
+        const response = await cloudinary.uploader.destroy(imgPublicId);
         console.log("File deleted Successfully", response);
     } catch (error) {
             console.error('Error uploading to Cloudinary', error);

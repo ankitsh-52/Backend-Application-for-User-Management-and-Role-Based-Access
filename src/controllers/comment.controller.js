@@ -26,9 +26,9 @@ const postComment = asyncHandler(async(req, res) => {
     
     let { id } = req.params;
     let photo = await Image.findById(id);
-    console.log("Image information$$^&^*&", photo);
+    // console.log("Image information$$^&^*&", photo);
     let userInfo = await Image.findById(id).populate("owner");
-    console.log("User information from image", userInfo);
+    // console.log("User information from image", userInfo);
     
     let { rating, review } = req.body;
     // console.log(` ${id}  ${rating}  ${review} all these are these`);
@@ -49,7 +49,7 @@ const postComment = asyncHandler(async(req, res) => {
         image : photo.id,
         owner : user._id,
     })
-    console.log("Comment is successfully added", comment);
+    // console.log("Comment is successfully added", comment);
     res.redirect( `/images/${id}/comments` );
 });
 

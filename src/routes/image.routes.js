@@ -5,13 +5,14 @@ import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { 
     imageUploadPage, 
     uploadImage,
-    userPhotosView,
-    userPhotos } from "../controllers/image.controller.js";
+    userPhotos,
+    deleteImage, } from "../controllers/image.controller.js";
 
 const router = Router();
+router.route("/:username/photo").get(userPhotos);
 
 router.route("/image").get(checkIfLoggedIn, imageUploadPage );
 router.route("/image").post( checkIfLoggedIn, upload.single("image"), uploadImage );
-// router.route("/user/photos").get(checkIfLoggedIn,  userPhotosView );
-router.route("/:username/photo").get(userPhotos);
+router.route("/image/:id/deleteImage").delete (checkIfLoggedIn,deleteImage);
+
 export default router;

@@ -45,7 +45,7 @@ app.use(currentUserCheck);
 import userRouter from "./routes/user.routes.js";
 import imageRouter from "./routes/image.routes.js";
 import commentRouter from "./routes/comment.routes.js";
-import likeRouter from "./routes/like.route.js";
+import likeRouter from "./routes/like.routes.js";
 import subscribeRouter  from "./routes/subscribe.routes.js";
 // route to get all the routes 
 

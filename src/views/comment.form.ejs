@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="/css/starRating.css">
 
 <div class="row mt-3">
-    <!-- <//% for(let photo of photo) %> -->
+    <!--* PHOTO CARD -->
     <div class="col-8 offset-3">
         <h3> <%= photo.title %> </h3>
     </div>
@@ -23,14 +23,17 @@
     </div>
 
     <br>
+    <!--* EDIT & DELETE BUTTON -->
     <div class="btns">
-        <a href="#" class="btn btn-dark col-1 offset-3 edit-btn">Edit</a>
-        <form>
-            <button class="btn btn-dark offset-5 delete-btn">Delete</button>
-        </form>
+        <% if((currUser) && (currUser._id.toString() === photo.owner._id.toString())) { %>
+            <a href="#" class="btn btn-dark col-1 offset-3 edit-btn">Edit</a>
+            <form action="/image/<%= photo._id %>/deleteImage?_method=DELETE" method="POST">
+                <button class="btn btn-dark offset-5 delete-btn">Delete</button>
+            </form>
+        <% } %>
     </div>
 
-    <!-- Comment Section -->
+    <!--* COMMENT SECTION -->
     <div class="col-8 offset-3 mb-3">
         <hr/>
         <h4>Leave a review</h4>
@@ -40,18 +43,8 @@
             method="POST"
             novalidate
         >
-            <!-- <div class="mb-3 mt-3">
-                <label for="rating" class="form-label">Rating</label>
-                <input 
-                    type="range" 
-                    name="rating" 
-                    id="rating" 
-                    min="1" 
-                    max="5" 
-                    class="form-range"
-                >
-            </div> -->
             <div class="mb-3 mt-3">
+                <!--* RATING -->
                 <label for="rating" class="form-label">Rating</label>
                 <!-- <fieldset class="starability-slot">
                     <input type="radio" id="no-rate" class="input-no-rate" name="rating" value="1" checked aria-label="No rating." />
@@ -80,6 +73,7 @@
                 </div>
             </div>
 
+            <!--* COMMENT -->
             <div class="mb-3 mt-3">
                 <label for="review" class="form-label">Comments</label>
                 <textarea 
@@ -95,7 +89,7 @@
             <button class="btn btn-outline-dark">Submit</button>
         </form>
 
-        <!-- REVIEWS LISTING -->
+        <!--* REVIEWS LISTING -->
         <hr/>
         <p><b>All Reviews</b></p>
         <div class="row">
@@ -108,20 +102,21 @@
                         <p class="starability-result" data-rating="<%= review.rating %>">
                         </p>
                         <p class="card-text"> <%= review.content %> </p>
-                        <!-- DELETE EDIT COMMENTS BUTTON -->
-                        <% if(currUser){ %>
+                        <!--* DELETE EDIT COMMENTS BUTTON -->
+                        <% if((currUser) &&  (currUser._id.toString() === review.owner._id.toString())){ %>
                             <div class="col">
+                                <!--* DELETE BUTTON SECTION -->
                                 <button type="button" class="btn btn-dark delete-btn" onclick="confirmDelete('<%= review._id %>')">Delete</button>
                                 <form id="deleteCommentForm<%= review._id %>" action="/comment/<%= review._id %>/deletecomment?_method=DELETE" method="POST" style="display: none;"></form>
 
                                 <!--* EDIT BUTTON SECTION -->
-                                <!-- <button type="submit" class="btn btn-dark mx-2">Edit</button> -->
                                 <button type="button" class="btn btn-dark mx-2" onclick="openEditLightbox('<%= review._id %>', '<%= review.content %>')">Edit</button>
                             </div>
                         <% } %>
                         <br>
                     </div>
 
+                    <!--* EDIT COMMENT LIGHTBOX EFFECT -->
                     <div id="editCommentLightbox" class="edit-comment-lightbox">
                         <div class="edit-comment-box">
                             <h4>Edit your comment</h4>
@@ -138,7 +133,7 @@
     </div>
 </div>
 
-<!-- Modal implementation -->
+<!--* DELETE Modal implementation -->
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="/js/comment.edit.js"></script>
 <script>
@@ -165,11 +160,6 @@
             }
         });
     }
-
-
-
-    /* EDIT COMMENT */
-    
 </script>
 
 

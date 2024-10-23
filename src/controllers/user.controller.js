@@ -9,8 +9,8 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
 import bcrypt  from "bcrypt";
 import { mailAuthentication } from "../utils/otpMail.js";
-import { currentUserCheck } from "../middlewares/response.locals.user.js";
-import { subscribe } from "diagnostics_channel";
+// import { currentUserCheck } from "../middlewares/response.locals.user.js";
+// import { subscribe } from "diagnostics_channel";
 
 // It is written as a separate because we need to use it multiples time we can use it inside but it is better.
 const generateAccessAndRefreshTokens = async ( userId ) => {
@@ -233,16 +233,41 @@ const verifyOtp = asyncHandler( async( req, res ) => {
 
 const homePage = asyncHandler(async(req, res) => {
     let photoUsername = await Image.find().populate("owner", "username");
+    // console.log("Homepage user.controller.js line 236 photoUsername data check", photoUsername);
+    
     let loggedInUserLikeData = [];
     let user = res.locals.currUser;
     // console.log(user, "User data from res.locals.currUser");
+    
     if(user){
         let likeDataOfUser = await Like.find({ likedBy : user._id }, {likedBy : 1, imageLiked : 1 });
-        console.log(likeDataOfUser, "array of image liked by logged in user");
+        // console.log(likeDataOfUser, "array of image liked by logged in user");
         loggedInUserLikeData = likeDataOfUser;
     }
-    res.render( "index" , { photoUsername, loggedInUserLikeData });
+
+    let likedPhoto = await Like.find();
+    // console.log(likeCount, "Total Like Count");
+    
+    res.render( "index.ejs" , { photoUsername, loggedInUserLikeData, likedPhoto });
 });
+
+
+//! Just deciding new home page
+const homePage2 = asyncHandler(async(req, res) => {
+    let photoUsername = await Image.find().populate("owner", "username");
+    // console.log("Homepage user.controller.js line 236 photoUsername data check", photoUsername);
+    
+    let loggedInUserLikeData = [];
+    let user = res.locals.currUser;
+    // console.log(user, "User data from res.locals.currUser");
+    
+    if(user){
+        let likeDataOfUser = await Like.find({ likedBy : user._id }, {likedBy : 1, imageLiked : 1 });
+        // console.log(likeDataOfUser, "array of image liked by logged in user");
+        loggedInUserLikeData = likeDataOfUser;
+    }
+    res.render( "index2.ejs" , { photoUsername, loggedInUserLikeData });
+}); 
 
 const logInPage = asyncHandler(async(req, res) => {
     res.render( "login.ejs" );
@@ -296,7 +321,7 @@ const loginUser = asyncHandler( async ( req, res ) => {
         httpOnly : true,
         secure : true
     }
-
+    //todo Cannot set headers after they are sent to the client
     return res
     .cookie( "accessToken", accessToken, options )  //Here the res can access the cookie as we have injected the cookie-parser MW.
     .cookie ( "refreshToken", refreshToken, options )
@@ -316,13 +341,34 @@ const loginUser = asyncHandler( async ( req, res ) => {
 const getCurrentUser = asyncHandler( async( req, res ) => {
     let user = req.user;
     // console.log(user, "&&&&&&&");
-    
+
     if (!user) {
         // throw new ApiError ( 404, "User not found" );
         let { statusCode, message } = new ApiError ( 404, "User not found" );
         res.render( "error.ejs", { statusCode, message } );
     }
-    res.render( "user.ejs", { user } )
+
+    let followOrNot = res.locals.currUser;
+    if(followOrNot){
+        followOrNot = await Subscription.findOne( { $and : [
+            { subscribedBy : res.locals.currUser._id },
+            { subscribedTo : user._id }
+        ] } );
+    }
+
+    let followersData = [];
+    if(req.user){
+        followersData = await Subscription.find( { subscribedTo : req.user._id }, { subscribedBy : 1 } ).populate("subscribedBy", "username");
+    }
+    // console.log("Followers Data", followersData);
+
+    let followingData = [];
+    if(req.user){
+        followingData = await Subscription.find( { subscribedBy : req.user._id }, { subscribedTo : 1 } ).populate("subscribedTo", "username");
+    }
+    // console.log("Following Data", followingData);
+
+    return res.render( "user.ejs", { user, followersData, followingData, followOrNot } )
 });
 
 const publicProfilePage = asyncHandler(async(req, res) => {
@@ -333,14 +379,36 @@ const publicProfilePage = asyncHandler(async(req, res) => {
         let { statusCode, message } = new ApiError ( 400, "User not found**" );
         return res.render( "error.ejs", { statusCode, message } );
     }
-    let subscribedData = [];
-    if(res.locals.currUser){
-        subscribedData = await Subscription.find({ subscribedBy : res.locals.currUser._id });
-    }
-    console.log("Subscribed Data", subscribedData);
 
-    return res.render( "user.ejs", { user, subscribedData } );
+    let followOrNot = res.locals.currUser;
+    if(followOrNot){
+        followOrNot = await Subscription.findOne( { $and : [
+            { subscribedBy : res.locals.currUser._id },
+            { subscribedTo : user._id }
+        ] } );
+    }
+    console.log("Follow or not value check", followOrNot);
+
+    let followersData = [];
+    if(res.locals.currUser){
+        followersData = await Subscription.find( { subscribedTo : res.locals.currUser._id }, { subscribedBy : 1 } ).populate("subscribedBy", "username");
+    }
+    // console.log(res.locals.currUser, "Followers Data", followersData);
+
+    let followingData = [];
+    if(res.locals.currUser){
+        followingData = await Subscription.find( { subscribedBy : res.locals.currUser._id }, { subscribedTo : 1 } ).populate("subscribedTo", "username");
+    }
+    return res.render( "user.ejs", { user, followersData, followingData, followOrNot } );
 });
+
+const followersListModal = asyncHandler(async(req, res) => {
+    let user = req.user;
+    let followersData = await Subscription.find( { subscribedTo : user._id }, { subscribedBy : 1 } ).populate("subscribedBy", "username");
+    console.log(followersData, "Followers Data");
+    return res.render("userFollowerModal.ejs", {followersData});
+    // let followingData = await Subscription.find();
+})
 
 //? To logout user we need to 1.) clear the cookie, 2.) remove the tokens and 3.) get the loggedIn user data to logout itself only to do this we have to make our own MW.
 
@@ -682,5 +750,6 @@ export {
     sendOtpPage,
     sendOtp,
     verifyOtp,
-    
+    homePage2,
+    followersListModal,
 }
