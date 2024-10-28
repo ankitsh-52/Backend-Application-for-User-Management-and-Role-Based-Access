@@ -23,17 +23,16 @@ import {
     avatarUpdatePage,
     coverImageUpdatePage,
     updateCoverImage,
-    homePage2,
-    followersListModal } from  "../controllers/user.controller.js";
+    followersListModal,
+    changeCurrentPassword } from  "../controllers/user.controller.js";
 
 const router = Router();
 router.route("/").get(currentUserCheck, homePage );
-router.route("/homePage").get(currentUserCheck, homePage2 );
 
 router.route("/register").get( registrationPage );
-router.route("/otp").get( sendOtpPage );
-router.route("/send-otp").get( sendOtp );
-router.route( "/otp" ).post( verifyOtp );
+// router.route("/otp").get( sendOtpPage );
+router.route("/sendOtp").get( sendOtp );
+router.route( "/verifyOtp" ).post( verifyOtp );
 router.route("/register").post(upload.fields
 ([
     /*upload.fields(): It is used when you need to upload multiple files with different field names at the same time. Each field name (like "avatar" or "coverImage") can have its own file, and these fields are mapped in the request under req.files by their respective names. */
@@ -49,7 +48,7 @@ router.route("/login").post( loginUser);
 router.route("/currentUser").get(verifyJWT, getCurrentUser);
 router.route( "/user/logout" ).post( verifyJWT, logoutUser );
 router.route( "/refresh-token" ).post( refreshAccessToken );    //todo
-router.route("/updateAccountDetailsPage").get(checkIfLoggedIn,updateAccountDetailsPage);
+router.route("/userProfileAndSetting").get(checkIfLoggedIn,updateAccountDetailsPage);
 router.route("/getUserChannelProfile").get(getUserChannelProfile);  //TODO
 router.route("/avatar").get(avatarUpdatePage);
 router.route("/avatar").patch(checkIfLoggedIn, upload.single("avatar"), updateUserAvatar);
@@ -58,5 +57,6 @@ router.route("/coverImage").patch(checkIfLoggedIn, upload.single("coverImage"), 
 
 router.route("/:username").get(publicProfilePage);
 router.route("/:username/followers").get(checkIfLoggedIn, followersListModal);
-
+router.route("/user/changePassword").post(checkIfLoggedIn, changeCurrentPassword);
+router.route("/:id/addProfile").post(checkIfLoggedIn);
 export  default router;

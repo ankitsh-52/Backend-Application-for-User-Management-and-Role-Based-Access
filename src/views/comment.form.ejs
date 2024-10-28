@@ -36,7 +36,7 @@
     <!--* COMMENT SECTION -->
     <div class="col-8 offset-3 mb-3">
         <hr/>
-        <h4>Leave a review</h4>
+        <h3>Leave a review</h3>
         <form 
             action="/comment/<%= photo._id %>/comments" 
             class="mb-3 needs-validation" 
@@ -90,8 +90,8 @@
         </form>
 
         <!--* REVIEWS LISTING -->
-        <hr/>
-        <p><b>All Reviews</b></p>
+        <h4> <%= totalComment %>. Reviews</h4>
+        <hr>
         <div class="row">
             <% for(review of reviews) { %>
                 <div class="review-card col-5 ms-3 mb-3"> 

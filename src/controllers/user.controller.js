@@ -9,6 +9,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
 import bcrypt  from "bcrypt";
 import { mailAuthentication } from "../utils/otpMail.js";
+import { likeCountEachImage } from "./like.controller.js";
 // import { currentUserCheck } from "../middlewares/response.locals.user.js";
 // import { subscribe } from "diagnostics_channel";
 
@@ -53,23 +54,6 @@ const registerUser = asyncHandler(async(req, res) => {
 
     //TODO console.log(req.body)
     const {otp, fullName, email, username, password} = req.body;
-    // console.log(fullName, email, username, password);
-
-    // let userOtp = localStorage.getItem('otpRandom');
-    // let userOtp = req.cookies?.otpRandom;
-    // console.log( ` ${userOtp} this is user otp hash `);
-    // const isOtpValid = await bcrypt.compare( otp.toString(), (userOtp) );
-    // console.log(isOtpValid + "%%%%%");
-    
-    // if( !isOtpValid ){
-    //     console.log("OTP entered by user:", otp);
-    //     console.log("OTP stored in cookie (hashed):", userOtp);
-        // alert("Incorrect Otp please enter again ");
-    //     console.log("incorrect otp");
-        
-    // } else {
-        // console.log(`Otp verification Successful`);
-        
 
         if (!fullName || !email || !username || !password) {
             // throw new ApiError(400, "All fields (full name, email, username, and password) are required.");
@@ -185,7 +169,12 @@ const sendOtpPage = asyncHandler( async(req, res) => {
 
 const sendOtp = asyncHandler(async(req, res, next) => {
     console.log("Generating and sending OTP...");
-    let otpRandom = await mailAuthentication(req, res);
+    let email = req.query.email;
+    console.log("Email from sendOtp handler: ", email);
+    let otpRandom = await mailAuthentication({
+        to: email,
+        subject : "Otp Authentication mail",
+    });
 
     if (!otpRandom) {
         return res.status(500).json({ message: "Failed to send OTP" });
@@ -209,7 +198,7 @@ const sendOtp = asyncHandler(async(req, res, next) => {
 });
 
 const verifyOtp = asyncHandler( async( req, res ) => {
-    let { userOtp } = req.body;
+    let { otp : userOtp } = req.body;
     let storedOtp = req.cookies?.otpRandom;
 
     if (!storedOtp) {
@@ -225,14 +214,15 @@ const verifyOtp = asyncHandler( async( req, res ) => {
     if(isOtpValid) {
         res.cookie('otpVerified', true, { httpOnly: true });
         console.log("OTP verified successfully");
-        res.redirect("/register");
+        // res.redirect("/register");
+        res.status(200).json({ success: true, message: "OTP verified successfully" });
     } else {
         return res.status(400).json({ success: false, message: "Invalid OTP." });
     }
 } )
 
 const homePage = asyncHandler(async(req, res) => {
-    let photoUsername = await Image.find().populate("owner", "username");
+    let photoUsername = await Image.find().populate("owner", "username");   //FOR PROFILE ICON
     // console.log("Homepage user.controller.js line 236 photoUsername data check", photoUsername);
     
     let loggedInUserLikeData = [];
@@ -245,29 +235,42 @@ const homePage = asyncHandler(async(req, res) => {
         loggedInUserLikeData = likeDataOfUser;
     }
 
-    let likedPhoto = await Like.find();
-    // console.log(likeCount, "Total Like Count");
+    // Aggregation query to count likes for each image
+    let likedPhotoAggregation = await Like.aggregate([
+        {
+        $group: {
+            _id: "$imageLiked", // Group by image ID
+            likeCount: { $sum: 1 } // Count the number of likes
+        }
+        }
+    ]);
     
-    res.render( "index.ejs" , { photoUsername, loggedInUserLikeData, likedPhoto });
+    // Create a plain object (hashmap) for O(1) access
+    let likeMap = {};
+    likedPhotoAggregation.forEach(item => {
+        likeMap[item._id.toString()] = item.likeCount;
+    });
+
+    res.render( "index.ejs" , { photoUsername, loggedInUserLikeData, likeMap });
 });
 
 
 //! Just deciding new home page
-const homePage2 = asyncHandler(async(req, res) => {
-    let photoUsername = await Image.find().populate("owner", "username");
-    // console.log("Homepage user.controller.js line 236 photoUsername data check", photoUsername);
+// const homePage2 = asyncHandler(async(req, res) => {
+//     let photoUsername = await Image.find().populate("owner", "username");
+//     // console.log("Homepage user.controller.js line 236 photoUsername data check", photoUsername);
     
-    let loggedInUserLikeData = [];
-    let user = res.locals.currUser;
-    // console.log(user, "User data from res.locals.currUser");
+//     let loggedInUserLikeData = [];
+//     let user = res.locals.currUser;
+//     // console.log(user, "User data from res.locals.currUser");
     
-    if(user){
-        let likeDataOfUser = await Like.find({ likedBy : user._id }, {likedBy : 1, imageLiked : 1 });
-        // console.log(likeDataOfUser, "array of image liked by logged in user");
-        loggedInUserLikeData = likeDataOfUser;
-    }
-    res.render( "index2.ejs" , { photoUsername, loggedInUserLikeData });
-}); 
+//     if(user){
+//         let likeDataOfUser = await Like.find({ likedBy : user._id }, {likedBy : 1, imageLiked : 1 });
+//         // console.log(likeDataOfUser, "array of image liked by logged in user");
+//         loggedInUserLikeData = likeDataOfUser;
+//     }
+//     res.render( "index2.ejs" , { photoUsername, loggedInUserLikeData });
+// }); 
 
 const logInPage = asyncHandler(async(req, res) => {
     res.render( "login.ejs" );
@@ -376,7 +379,7 @@ const publicProfilePage = asyncHandler(async(req, res) => {
     const user = await User.findOne({username}, {password : 0, refreshToken : 0});
 
     if( !user ){
-        let { statusCode, message } = new ApiError ( 400, "User not found**" );
+        let { statusCode, message } = new ApiError ( 400, "User not found" );
         return res.render( "error.ejs", { statusCode, message } );
     }
 
@@ -504,12 +507,27 @@ const refreshAccessToken = asyncHandler( async( req, res ) => {
 });
 
 const changeCurrentPassword = asyncHandler(async(req, res)=>{
-    let { newPassword, currentPassword } = req.body;
+    let { confirmNewPassword, newPassword, currentPassword } = req.body;
 
     const user = await User.findById(req.user?.id);
 
-    if( !isPasswordCorrect(currentPassword) ){
-        throw new ApiError( 401, "Unauthorized Access" );
+    // if( !user.isPasswordCorrect(currentPassword) ){
+    //     throw new ApiError( 401, "Unauthorized Access" );
+    //     let { statusCode, message } = new ApiError ( 401, "Unauthorized Access" );
+    //     res.render( "error.ejs", { statusCode, message } );
+    // }
+
+    const pwdCheck = await user.isPasswordCorrect(currentPassword);
+    if( !pwdCheck ){
+        // throw new ApiError( 401, "Unauthorized Access" );
+        let { statusCode, message } = new ApiError ( 401, "Unauthorized Access" );
+        res.render( "error.ejs", { statusCode, message } );
+    }
+
+    if(newPassword !== confirmNewPassword){
+        // throw new ApiError(401, "Password don't match");
+        let { statusCode, message } = new ApiError ( 404, "Password don't match" );
+        res.render( "error.ejs", { statusCode, message } );
     }
 
     user.password = newPassword;    // when we save the pwd then the pre hook on the pwd also executes & it handles the encryption
@@ -518,7 +536,6 @@ const changeCurrentPassword = asyncHandler(async(req, res)=>{
     return res
     .status ( 200 )
     .json( new ApiResponse( 200,{}, "Password Changed Successfully" ) );
-
 });
 
 //todo file update For file update make separate controller.
@@ -526,7 +543,7 @@ const changeCurrentPassword = asyncHandler(async(req, res)=>{
 const updateAccountDetailsPage = asyncHandler(async(req, res) => {
     let user = req.user;
     // console.log("##@@!!##", user);
-    res.render("user.setting.ejs", { user });
+    res.render("profile.user.ejs", { user });
 });
 
 const updateAccountDetails = asyncHandler( async(req, res) => {
@@ -750,6 +767,5 @@ export {
     sendOtpPage,
     sendOtp,
     verifyOtp,
-    homePage2,
     followersListModal,
 }

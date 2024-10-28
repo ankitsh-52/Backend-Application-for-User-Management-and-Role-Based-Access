@@ -7,7 +7,7 @@ import { ApiResponse } from './ApiResponse.js';
 
 configDotenv();
 
-const mailAuthentication = (async (req, res) => {
+const mailAuthentication = (async (options) => {
     try {
         const transporter = nodemailer.createTransport({
             host: process.env.EMAIL_HOST,
@@ -15,15 +15,15 @@ const mailAuthentication = (async (req, res) => {
             secure: true,
             auth: {
                 user: process.env.EMAIL_USER, 
-                pass: process.env.EMAIL_PASS 
+                pass: process.env.EMAIL_PASS
             }
         });
 
         let otpRandom = Math.floor(100000 + Math.random() * 900000);
         const mailOptions = {
             from: process.env.EMAIL_USER, 
-            to: 'ankitkrsharma5595@gmail.com',
-            subject: 'Test Email',
+            to: options.to,
+            subject: options.subject,
             text: `Your OTP number is: ${otpRandom}`
         };
         await transporter.sendMail(mailOptions);

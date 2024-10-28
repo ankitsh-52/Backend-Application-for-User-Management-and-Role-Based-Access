@@ -1,4 +1,24 @@
 <% layout("/layouts/boilerplate") %>
+<link rel="stylesheet" href="/css/stylish.button.style.css">
+<style>
+    #otp-field {
+        margin-top: 20px;
+    }
+    
+    button.otp, button#verify-otp {
+        height: 38px;
+        width: 100%;
+    }
+    
+    button#verify-otp {
+        display: block;
+    }
+    
+    button#register-btn {
+        margin-top: 20px;
+    }
+    
+</style>
 <body>
     <h1 class="offset-2">Welcome Please Register Here</h1>
     <div class="col-8 offset-2">
@@ -35,17 +55,22 @@
                 />
                 <div class="invalid-feedback">Please enter username</div>
             </div>
-            <div class="mb-3">
-                <label for="email" class="form-label">Email</label>
-                <input 
-                id="email"
-                type="email" 
-                name="email" 
-                placeholder="Enter email"
-                class="form-control"
-                required
-                />
-                <div class="invalid-feedback">Please enter email correctly</div>
+            <div class="row align-items-center">
+                <div class="mb-3 col-md-6">
+                    <label for="email" class="form-label">Email</label>
+                    <input 
+                        id="email"
+                        type="email" 
+                        name="email" 
+                        placeholder="Enter email"
+                        class="form-control"
+                        required
+                    />
+                    <div class="invalid-feedback">Please enter email correctly</div>
+                </div>
+                <div class="mb-3 col-md-6 d-flex align-items-center">
+                    <button type="button" class="btn btn-dark otp w-100" id="send-otp" style="height: 100%; display:inline">Send OTP</button>
+                </div>
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label">Password</label>
@@ -83,7 +108,7 @@
             </div>
 
             <!-- Hidden OTP Field, to be shown after OTP is sent -->
-            <!-- <div class="mb-3" id="otp-field" style="display:none;">
+            <!-- <div class="mb-3" id="otp-field" style="display: none;">
                 <label for="otp" class="form-label">Enter OTP</label>
                 <input 
                 type="number" 
@@ -92,17 +117,37 @@
                 class="form-control"
                 required />
                 <div class="invalid-feedback">Please enter the OTP</div>
-            </div> -->
+            </div>
+            <button type="button" class="btn btn-dark" id="verify-otp" style="display: none;">Verify OTP</button> -->
+            <div class="row" id="otp-field" style="display: none;">
+                <div class="mb-3 col-md-6">
+                    <label for="otp" class="form-label">Enter OTP</label>
+                    <input 
+                        type="number" 
+                        name="otp" 
+                        placeholder="Enter OTP" 
+                        class="form-control"
+                        required />
+                    <div class="invalid-feedback">Please enter the OTP</div>
+                </div>
+                <div class="mb-3 col-md-6 d-flex align-items-center justify-content-between">
+                    <button type="button" class="btn btn-dark w-100" id="verify-otp" style="display: none;">Verify OTP</button>
+                </div>
+            </div>
             
             <!-- <button type="submit" class="btn btn-dark" form="form1">Register</button> -->
-            <!-- <button type="button" class="btn btn-dark otp" id="send-otp">Send OTP</button><br> -->
+            
             <!-- <button type="submit" class="btn btn-dark" id="register-btn" >Register</button> -->
-            <%- include("./buttons/stylish.button.ejs") %>
+            <button class="uiverse-button" type="submit" id="register-btn" disabled>
+                <span class="transition"></span>
+                <span class="gradient"></span>
+                <span class="label">Register</span>
+            </button>
         </form>
         
     </div>
-    <!-- <script src="/js/registration.otp.script.js"></script>
-    <script src="/js/otp2.script.js"></script> -->
+    <script src="/js/registration.otp.script.js"></script>
+    <!-- <script src="/js/otp2.script.js"></script> --> 
     <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
 <!-- <script src="/js/otp.script.js"></script> -->
 </body>

@@ -169,13 +169,75 @@
                     </div>
                 </div>
                 <!--* SETTING BUTTON -->
-                <% if( (currUser) && (currUser._id.toString() === user._id.toString())){ %>
+                <!-- <% if( (currUser) && (currUser._id.toString() === user._id.toString())){ %>
                     <div class="col-md-4">
                         <div class="card mb-4 shadow-sm">
                             <div class="card-body">
                                 <h5 class="card-title">Settings</h5>
                                 <p class="card-text">Manage your account settings</p>
-                                <a href="/updateAccountDetailsPage" class="btn btn-primary">Edit Settings</a>
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                    Edit Settings
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        ...
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary">Save changes</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                <% } %> -->
+
+                <% if ((currUser) && (currUser._id.toString() === user._id.toString())) { %>
+                    <div class="col-md-4">
+                        <div class="card mb-4 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title">Settings</h5>
+                                <p class="card-text">Manage your account settings</p>
+                                <!-- Button to trigger modal -->
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                    Edit Settings
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                
+                    <!-- Modal -->
+                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Edit Account Settings</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <!-- Modal body content goes here -->
+                                    <p>Here you can edit your account settings...</p>
+                                    <a href="/avatar" class="btn btn-primary">Update Avatar</a><br>
+                                    <br>
+                                    <a href="/coverImage" class="btn btn-primary">Update Cover Image</a>
+                                    <br><br>
+                                    <a href="/userProfileAndSetting" class="btn btn-primary">Account Settings</a>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
                             </div>
                         </div>
                     </div>

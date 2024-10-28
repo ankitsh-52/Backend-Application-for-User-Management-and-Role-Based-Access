@@ -57,7 +57,7 @@ const getUserFollowerChannel = asyncHandler( async(req, res) => {
 } );
 
 const getUserFollowingChannels = asyncHandler( async(req, res) => {
-
+    
 } )
 
 export {

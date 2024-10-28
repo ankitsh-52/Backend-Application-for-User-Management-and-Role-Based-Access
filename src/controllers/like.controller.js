@@ -3,12 +3,6 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/apiErrors.js";
 import { Image } from "../models/image.model.js";
 
-// const likeImagedata = asyncHandler(async(req, res, next) => {
-//     let likedUser = await Like.find({}, {likedBy : 1});
-//     console.log("Liked User data",likedUser);
-//     next();
-// })
-
 const toggleImageLike = asyncHandler(async(req, res) => {
     let { id } = req.params;
     // console.log("Image which is liked its id ",id);
@@ -36,6 +30,22 @@ const toggleImageLike = asyncHandler(async(req, res) => {
     res.redirect("/");
 });
 
+
+const likeCountEachImage = asyncHandler(async(req, res) => {
+    let allImage = await Image.find({},{_id : 1}); 
+    // console.log("Image data from like controller", allImage);
+    
+    let likeMap = new Map();
+    for(let image of allImage){
+        let likeCount = await Like.find({imageLiked : image._id}).countDocuments();
+        likeMap.set(image, likeCount);
+    }
+    let likeCount = await Like.find().countDocuments();
+    console.log("Total Like Count: ", likeCount, "each Image Like Count", likeMap);
+    return likeMap;
+})
+
 export {
     toggleImageLike,
+    likeCountEachImage,
 }
