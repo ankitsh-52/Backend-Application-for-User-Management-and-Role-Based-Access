@@ -36,43 +36,58 @@
         <div class="d-flex flex-column align-items-start ms-5">
             <h3 class="mt-4"> <%= user.username %> </h3>
             <p class="text-muted">Some bio or user details</p>
-            <!--* FOLLOW BUTTON -->
+            
+            <!--* FOLLOW, UNFOLLOW BUTTON & FOLLOWER & FOLLOWING NO. SHOWN-->
             <form action="/user/toggleFollow/<%= user._id %>" method="POST">
-                <% if( !currUser ) { %>
-                    <button type="submit" class="btn btn-outline-dark mx-2 squared-pill d-flex align-items-center">
-                        Follow
-                    </button>
-                <% } else { %>
-                    <% if(( user._id.toString() !== currUser._id.toString() )) { %>
-                        <% if(followOrNot) { %>
+                <% if( !currUser ) { %> <!--* No user logged in -->
+                    <div class="d-flex justify-content-center">
+                        <button type="button" class="btn btn-dark mx-2 squared-pill">
+                            Followers(<%= followersData.length %>)
+                        </button>
+                        <button type="button" class="btn btn-dark mx-2 squared-pill">
+                            Following(<%= followingData.length %>)
+                        </button>
+                    </div>
+                <% } else { %>  <!--* Someone is logged in -->
+                    <% if(( user._id.toString() !== currUser._id.toString() )) { %> 
+                        <!--! Logged in user is checking another user page -->
+                        <% if(followOrNot) { %> 
                             <button type="submit" class="btn btn-outline-dark mx-2 squared-pill d-flex align-items-center">
                                 Unfollow
                             </button>
                         <% } else { %>
+                        <!--* IF LOGGED IN USER IS NOT FOLLOWING THEN ONLY FOLLOWER & FOLLOWING NO. IS VISIBLE -->
                             <button type="submit" class="btn btn-outline-dark mx-2 squared-pill d-flex align-items-center">
                                 Follow
-                            </button>
+                            </button><br>
+                            <div class="d-flex justify-content-center">
+                                <button type="button" class="btn btn-outline-dark mx-2 squared-pill">
+                                    Followers(<%= followersData.length %>)
+                                </button>
+                                <button type="button" class="btn btn-outline-dark mx-2 squared-pill">
+                                    Following(<%= followingData.length %>)
+                                </button>
+                            </div>
                         <% } %>
+                    <% } else { %>
+                        <!--! logged in user follower & following list -->
+                        <div class="d-flex">    
+                            <!--* FOLLOWERS BUTTON -->
+                            <button type="button" class="btn btn-outline-dark mx-2 squared-pill d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#exampleModal-1">
+                                Followers(<%= followersData.length %>)
+                            </button>
+
+                            <!--* FOLLOWING BUTTON -->
+                            <button type="button" class="btn btn-outline-dark mx-2 squared-pill d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#exampleModal-2">
+                                Following(<%= followingData.length %>)
+                            </button>
+                        </div>
                     <% } %>
                 <% } %>
             </form>
 
-            <br>
-            <!--* FOLLOWER & FOLLOWING LIST -->
-            <% if( currUser && followOrNot ) { %>
-                <div class="d-flex"> <!-- Changed to d-flex to align buttons in the same row -->
-                    <!--* FOLLOWERS BUTTON -->
-                    <button type="button" class="btn btn-outline-dark mx-2 squared-pill d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#exampleModal-1">
-                        Followers
-                    </button>
-            
-                    <!--* FOLLOWING BUTTON -->
-                    <button type="button" class="btn btn-outline-dark mx-2 squared-pill d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#exampleModal-2">
-                        Following
-                    </button>
-                </div>
-            
-                <!--* FOLLOWERS MODAL -->
+            <!--**! logged in user FOLLOWERS MODAL -->
+            <% if(currUser) { %>
                 <div class="modal fade" id="exampleModal-1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                         <div class="modal-content">
@@ -82,19 +97,24 @@
                             </div>
                             <div class="modal-body">
                                 <div class="list-group">
-                                    <!--* FOLLOWER DATA -->
+                                    <!--* FOLLOWER DATA & REMOVE BUTTON-->
                                     <% for(let follower of followersData) { %>
                                         <!-- Wrap content in d-flex to align username and button in the same row -->
                                         <div class="list-group-item d-flex justify-content-between align-items-center">
                                             <!--* USERNAME -->
-                                            <a href="#" style="text-decoration: none;">
-                                                <i class="fa-solid fa-circle-user fa-lg"></i>&nbsp;<b>@<%= follower.subscribedBy.username %></b>
+                                            <a href="/<%= follower.subscribedBy.username %>" style="text-decoration: none;">
+                                                <i class="fa-solid fa-circle-user fa-lg"></i>&nbsp;
+                                                <b>@<%= follower.subscribedBy.username %></b>
+                                                <h6><%= follower.subscribedBy._id %></h6>
                                             </a>
-            
+    
                                             <!--* REMOVE BUTTON -->
-                                            <button class="btn btn-outline-dark squared-pill d-flex align-items-center">
-                                                Remove
-                                            </button>
+                                            <% if( currUser._id.toString() === user._id.toString() ) { %>
+                                                <form action="/user/toggleFollow/<%= follower.subscribedBy._id %>" method="POST">                                            <form action="/user/toggleFollow/<%= user._id %>" method="POST">
+                                                    <button class="btn btn-outline-dark squared-pill d-flex align-items-center" type="submit">
+                                                        Remove
+                                                </form>
+                                            <% } %>
                                         </div>
                                     <% } %>
                                 </div>
@@ -105,8 +125,8 @@
                         </div>
                     </div>
                 </div>
-            
-                <!--* FOLLOWING MODAL -->
+
+                <!--! logged in user FOLLOWING MODAL -->
                 <div class="modal fade" id="exampleModal-2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                         <div class="modal-content">
@@ -121,14 +141,124 @@
                                         <!-- Wrap content in d-flex to align username and button in the same row -->
                                         <div class="list-group-item d-flex justify-content-between align-items-center">
                                             <!--* USERNAME -->
-                                            <a href="#" style="text-decoration: none;">
+                                            <a href="/<%= following.subscribedTo.username %>" style="text-decoration: none;">
                                                 <i class="fa-solid fa-circle-user fa-lg"></i>&nbsp;<b>@<%= following.subscribedTo.username %></b>
                                             </a>
             
                                             <!--* UNFOLLOW BUTTON -->
-                                            <button class="btn btn-outline-dark squared-pill d-flex align-items-center">
+                                            <!-- <button class="btn btn-outline-dark squared-pill d-flex align-items-center">
                                                 Unfollow
-                                            </button>
+                                            </button> -->
+                                            <% if( currUser.username.toString() === user.username.toString() ) { %>
+                                                <!-- <form action="/user/toggleFollow/<%= user._id %>" method="POST">                                            <form action="/user/toggleFollow/<%= user._id %>" method="POST"> -->
+                                                    <button class="btn btn-outline-dark squared-pill d-flex align-items-center" type="submit">
+                                                        Unfollow
+                                                    </button>
+                                                <!-- </form> -->
+                                            <% } %>
+                                        </div>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-dark squared-pill d-flex align-items-center" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <% } %>
+
+            <br>
+
+            <!--* FOLLOWER & FOLLOWING LIST check of another user when logged in -->
+            <% if( currUser && followOrNot ) { %>
+                <div class="d-flex">    
+                    <!--* FOLLOWERS BUTTON -->
+                    <button type="button" class="btn btn-outline-dark mx-2 squared-pill d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#exampleModal-3">
+                        Followers(<%= followersData.length %>)
+                    </button>
+            
+                    <!--* FOLLOWING BUTTON -->
+                    <button type="button" class="btn btn-outline-dark mx-2 squared-pill d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#exampleModal-4">
+                        Following(<%= followingData.length %>)
+                    </button>
+                </div>
+            
+                <!--* FOLLOWERS MODAL -->
+                <div class="modal fade" id="exampleModal-3" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Follower List</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="list-group">
+                                    <!--* FOLLOWER DATA & REMOVE BUTTON-->
+                                    <% for(let follower of followersData) { %>
+                                        <!-- Wrap content in d-flex to align username and button in the same row -->
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            <!--* USERNAME -->
+                                            <a href="/<%= follower.subscribedBy.username %>" style="text-decoration: none;">
+                                                <i class="fa-solid fa-circle-user fa-lg"></i>&nbsp;
+                                                <b>@
+                                                    <% if( follower.subscribedBy?.username ) { %>
+                                                        <%= follower.subscribedBy.username %>
+                                                    <% } else { %>
+                                                        ###
+                                                    <% } %>
+                                                </b>
+                                            </a>
+
+                                            <!--* REMOVE BUTTON -->
+                                            <% if( currUser.username.toString() === user.username.toString() ) { %>
+                                                <form action="/user/toggleFollow/<%= user._id %>" method="POST">                                            <form action="/user/toggleFollow/<%= user._id %>" method="POST">
+                                                    <button class="btn btn-outline-dark squared-pill d-flex align-items-center" type="submit">
+                                                        Remove
+                                                    </button>
+                                                </form>
+                                            <% } %>
+                                        </div>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-dark squared-pill d-flex align-items-center" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            
+                <!--* FOLLOWING MODAL -->
+                <div class="modal fade" id="exampleModal-4" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLabel">Following List</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="list-group">
+                                    <!--* FOLLOWING DATA -->
+                                    <% for(let following of followingData) { %>
+                                        <!-- Wrap content in d-flex to align username and button in the same row -->
+                                        <div class="list-group-item d-flex justify-content-between align-items-center">
+                                            <!--* USERNAME -->
+                                            <a href="/<%= following.subscribedTo.username %>" style="text-decoration: none;">
+                                                <i class="fa-solid fa-circle-user fa-lg"></i>&nbsp;<b>@<%= following.subscribedTo.username %></b>
+                                            </a>
+            
+                                            <!--* UNFOLLOW BUTTON -->
+                                            <!-- <button class="btn btn-outline-dark squared-pill d-flex align-items-center">
+                                                Unfollow
+                                            </button> -->
+                                            <% if( currUser.username.toString() === user.username.toString() ) { %>
+                                                <form action="/user/toggleFollow/<%= user._id %>" method="POST">                                            <form action="/user/toggleFollow/<%= user._id %>" method="POST">
+                                                    <button class="btn btn-outline-dark squared-pill d-flex align-items-center" type="submit">
+                                                        Unfollow
+                                                    </button>
+                                                </form>
+                                            <% } %>
                                         </div>
                                     <% } %>
                                 </div>
@@ -148,15 +278,57 @@
         <div class="dashboard">
             <h4>Dashboard</h4>
             <div class="row">
+                <!--* CHANNEL STATS BUTTON -->
                 <div class="col-md-4">
                     <div class="card mb-4 shadow-sm">
                         <div class="card-body">
-                            <h5 class="card-title">Statistics</h5>
-                            <p class="card-text">View your activity statistics</p>
-                            <a href="#" class="btn btn-primary">View Stats</a>
+                            <h5 class="card-title">Channel Details</h5>
+                            <p class="card-text">View page details & stats</p>
+                            <!--* BUTTON TO TRIGGER THE CHANNEL STATS MODAL -->
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#statsModal">
+                                View Details
+                            </button>
                         </div>
                     </div>
                 </div>
+                <!--* STATS MODAL -->
+                <div class="modal fade" id="statsModal" tabindex="-1" aria-labelledby="statsModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="statsModalLabel">Channel Details</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- Modal content goes here -->
+                                <p><h4>About</h4></p>
+                                <% if(profileData) { %>
+                                    <% if(profileData.bio) { %>
+                                        <h6><%= profileData.bio %></h6>
+                                    <% } %>
+                                
+                                    <p><h4>Channel Details</h4></p>
+                                    <h6>Joined </h6>
+
+                                    <p><h4><i class="fa-solid fa-link fa-sm"></i>&nbsp;Links</h4></p>
+                                    <h6><i class="fa-brands fa-instagram fa-lg"></i>&nbsp; : </h6>
+                                    <br>
+                                    <h6><i class="fa-brands fa-x-twitter fa-lg"></i>&nbsp; : </h6>
+                                    <br>
+                                    <h6><i class="fa-brands fa-facebook-f fa-lg"></i>&nbsp; : </h6>
+                                    <br>
+                                    <h6><i class="fa-brands fa-linkedin-in fa-lg"></i>&nbsp; : </h6>
+                                    <br>
+                                <% } %>
+                                <!-- Add as much content as needed to make the modal scrollable -->
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
                 <!--* PHOTO BUTTON -->
                 <div class="col-md-4">
                     <div class="card mb-4 shadow-sm">
@@ -233,7 +405,7 @@
                                     <br>
                                     <a href="/coverImage" class="btn btn-primary">Update Cover Image</a>
                                     <br><br>
-                                    <a href="/userProfileAndSetting" class="btn btn-primary">Account Settings</a>
+                                    <a href="/<%= currUser._id %>/addProfile" class="btn btn-primary">Account Settings</a>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

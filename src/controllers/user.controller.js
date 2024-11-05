@@ -3,12 +3,14 @@ import { ApiError } from "../utils/apiErrors.js";
 import { User } from "../models/user.model.js";
 import { Image } from "../models/image.model.js";
 import { Like } from "../models/like.model.js";
+import { Profile } from "../models/profile.model.js";
 import { Subscription } from "../models/subscription.model.js";
 import { uploadOnCloudinary, deleteOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
 import bcrypt  from "bcrypt";
 import { mailAuthentication } from "../utils/otpMail.js";
+import { forgotMailAuthentication } from "../utils/forgotPwdMail.js";
 import { likeCountEachImage } from "./like.controller.js";
 // import { currentUserCheck } from "../middlewares/response.locals.user.js";
 // import { subscribe } from "diagnostics_channel";
@@ -124,7 +126,8 @@ const registerUser = asyncHandler(async(req, res) => {
             fullName,  
             avatar: avatar.url,
             avatarPublicId: avatar.public_id,
-            coverImage: coverImage?.url || "",  
+            coverImage: coverImage?.url || "",
+            coverImagePublicId: coverImage?.public_id || "",  
             /*? Here we 1st check whether the user has given 
             coverImage or not as it is not required file, & since it is not req file we have previously not checked it like the avatar, therefore 'coverImage?.url' ?-> it means if available use else not leave it empty.
             */
@@ -219,7 +222,7 @@ const verifyOtp = asyncHandler( async( req, res ) => {
     } else {
         return res.status(400).json({ success: false, message: "Invalid OTP." });
     }
-} )
+})
 
 const homePage = asyncHandler(async(req, res) => {
     let photoUsername = await Image.find().populate("owner", "username");   //FOR PROFILE ICON
@@ -342,8 +345,7 @@ const loginUser = asyncHandler( async ( req, res ) => {
 });
 
 const getCurrentUser = asyncHandler( async( req, res ) => {
-    let user = req.user;
-    // console.log(user, "&&&&&&&");
+    let user = req.user;    //only if user is logged in.
 
     if (!user) {
         // throw new ApiError ( 404, "User not found" );
@@ -351,7 +353,7 @@ const getCurrentUser = asyncHandler( async( req, res ) => {
         res.render( "error.ejs", { statusCode, message } );
     }
 
-    let followOrNot = res.locals.currUser;
+    let followOrNot = res.locals.currUser;  //whether the logged in user is following the 
     if(followOrNot){
         followOrNot = await Subscription.findOne( { $and : [
             { subscribedBy : res.locals.currUser._id },
@@ -360,49 +362,57 @@ const getCurrentUser = asyncHandler( async( req, res ) => {
     }
 
     let followersData = [];
-    if(req.user){
-        followersData = await Subscription.find( { subscribedTo : req.user._id }, { subscribedBy : 1 } ).populate("subscribedBy", "username");
+    if(user){
+        followersData = await Subscription.find( { subscribedTo : user._id }, { subscribedBy : 1 } ).populate("subscribedBy", "username");
     }
     // console.log("Followers Data", followersData);
 
     let followingData = [];
-    if(req.user){
-        followingData = await Subscription.find( { subscribedBy : req.user._id }, { subscribedTo : 1 } ).populate("subscribedTo", "username");
+    if(user){
+        followingData = await Subscription.find( { subscribedBy : user._id }, { subscribedTo : 1 } ).populate("subscribedTo", "username");
     }
     // console.log("Following Data", followingData);
 
-    return res.render( "user.ejs", { user, followersData, followingData, followOrNot } )
+    //* CHANNEL DETAILS 
+    let profileData = await Profile.findOne({ owner : req.user._id });
+
+    return res.render( "user.ejs", { user, followersData, followingData, followOrNot, profileData } )
 });
 
 const publicProfilePage = asyncHandler(async(req, res) => {
     let { username } = req.params;
-    const user = await User.findOne({username}, {password : 0, refreshToken : 0});
+    const user = await User.findOne({username}, {password : 0, refreshToken : 0}); //public page
 
     if( !user ){
         let { statusCode, message } = new ApiError ( 400, "User not found" );
         return res.render( "error.ejs", { statusCode, message } );
     }
 
-    let followOrNot = res.locals.currUser;
+    let followOrNot = res.locals.currUser;  // res.locals.currUser : logged in user
     if(followOrNot){
         followOrNot = await Subscription.findOne( { $and : [
             { subscribedBy : res.locals.currUser._id },
             { subscribedTo : user._id }
         ] } );
     }
-    console.log("Follow or not value check", followOrNot);
+    // console.log("Follow or not value check", followOrNot);
 
     let followersData = [];
-    if(res.locals.currUser){
-        followersData = await Subscription.find( { subscribedTo : res.locals.currUser._id }, { subscribedBy : 1 } ).populate("subscribedBy", "username");
+    if(user){
+        followersData = await Subscription.find( { subscribedTo : user._id }, { subscribedBy : 1 } ).populate("subscribedBy", "username");
     }
-    // console.log(res.locals.currUser, "Followers Data", followersData);
+    console.log(res.locals.currUser.username, "Followers Data**", followersData);
 
     let followingData = [];
-    if(res.locals.currUser){
-        followingData = await Subscription.find( { subscribedBy : res.locals.currUser._id }, { subscribedTo : 1 } ).populate("subscribedTo", "username");
+    if(user){
+        followingData = await Subscription.find( { subscribedBy : user._id }, { subscribedTo : 1 } ).populate("subscribedTo", "username");
     }
-    return res.render( "user.ejs", { user, followersData, followingData, followOrNot } );
+    console.log(res.locals.currUser.username, "Following Data@@", followingData);
+
+    let profileData = await Profile.findOne({ owner : user._id })
+    // console.log("Profile data from publicProfilePage: ", profileData);
+
+    return res.render( "user.ejs", { user, followersData, followingData, followOrNot, profileData } );
 });
 
 const followersListModal = asyncHandler(async(req, res) => {
@@ -594,6 +604,7 @@ const updateUserAvatar = asyncHandler( async( req, res) =>{
     }
 
     // console.log("@@@@@@", avatar);
+    //! CLOUDINARY DESTROY
     const deleteAvatarUri = await User.findById({_id: req.user?._id}, {avatarPublicId : 1});
     // console.log("Delete Avatar URI***", deleteAvatarUri);
     const result = await deleteOnCloudinary(deleteAvatarUri.avatarPublicId);
@@ -640,6 +651,13 @@ const updateCoverImage = asyncHandler( async( req, res )=>{
         // throw new ApiError( 401, "Error in uploading the cover image" )
         let { statusCode, message } = new ApiError ( 401, "Error in uploading the cover image" );
         res.render( "error.ejs", { statusCode, message } );
+    }
+
+    //! CLOUDINARY DESTROY
+    const deleteCoverImageUri = await User.findById({_id: req.user?._id}, {coverImagePublicId : 1});
+    if(deleteCoverImageUri){
+        const result = await deleteOnCloudinary(deleteCoverImageUri.coverImagePublicId);
+        console.log("Deleted previous coverImage from cloud", result);
     }
 
     const user = await User.findByIdAndUpdate( 
@@ -746,6 +764,75 @@ const getUserChannelProfile = asyncHandler( async( req, res )=>{
 
 });
 
+const userProfileDataPage = asyncHandler(async(req, res) => {
+    let userData = await User.findById(req.user._id);
+    if( !userData ){
+        let { statusCode, message } = new ApiError ( 200, "User data not find" );
+        return res.render("error.ejs", { statusCode, message } );
+    }
+    return res.render("profile.user.ejs", { userData });
+})
+
+const userProfileData = asyncHandler(async(req, res) => {
+    let { name, location, personalsite, bio } = req.body;
+    let profileData = await Profile.create({
+        fullName : name,
+        location : location,
+        personalSite : personalsite,
+        bio : bio,
+        owner : req.user._id,
+    });
+    if( !profileData ){
+        throw new ApiError(400, "Error in inserting user profile data");
+    }
+    // console.log("User Profile information", profileData);
+    // return res.status(200)
+    // .json(
+    //     new ApiResponse(200,profileData, "User data added successfully" )
+    // );
+    // return res.render("user.ejs", { profileData } );
+    return res.redirect("/req.user._id/addProfile");
+});
+
+const userProfileSocialLinks = asyncHandler(async(req, res) => {
+    let { facebook, linkedin, instagram, twitter } = req.body;
+
+
+})
+
+const forgotPasswordPage = asyncHandler(async(req, res) => {
+    return res.render("forgotPasswordOtp.ejs");
+});
+
+const forgotPasswordEmail = asyncHandler(async(req, res) => {
+    let { email } = req.body;
+
+    if( !email ){
+        throw new ApiError(400, "Enter correct email address.");
+    }
+    // console.log("Pwd reset email", email);
+    let newPassword = await forgotMailAuthentication({
+        to : email,
+        subject : "Password reset mail",
+        text : `${email} your password reset request is accepted.`
+    });
+    // console.log("forgot pwd email resp", newPassword);
+
+    const user = await User.findOneAndUpdate(
+        {email : email},
+        {
+            $set : {
+                password : newPassword,
+            }
+        },
+        {
+            new : true
+        }
+    );
+    // console.log("New password resp check", user);
+    res.redirect("/login");
+});
+
 export {
     registrationPage,
     registerUser,
@@ -768,4 +855,8 @@ export {
     sendOtp,
     verifyOtp,
     followersListModal,
+    userProfileData,
+    userProfileDataPage,
+    forgotPasswordPage,
+    forgotPasswordEmail,
 }

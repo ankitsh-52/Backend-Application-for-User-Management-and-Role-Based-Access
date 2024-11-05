@@ -24,7 +24,11 @@ import {
     coverImageUpdatePage,
     updateCoverImage,
     followersListModal,
-    changeCurrentPassword } from  "../controllers/user.controller.js";
+    changeCurrentPassword,
+    userProfileData,
+    userProfileDataPage,
+    forgotPasswordPage,
+    forgotPasswordEmail } from  "../controllers/user.controller.js";
 
 const router = Router();
 router.route("/").get(currentUserCheck, homePage );
@@ -58,5 +62,9 @@ router.route("/coverImage").patch(checkIfLoggedIn, upload.single("coverImage"), 
 router.route("/:username").get(publicProfilePage);
 router.route("/:username/followers").get(checkIfLoggedIn, followersListModal);
 router.route("/user/changePassword").post(checkIfLoggedIn, changeCurrentPassword);
-router.route("/:id/addProfile").post(checkIfLoggedIn);
+router.route("/:id/addProfile").get(checkIfLoggedIn, userProfileDataPage);
+router.route("/:id/addProfile").post(checkIfLoggedIn, userProfileData);
+router.route("/user/forgotPassword").get(forgotPasswordPage);
+router.route("/user/forgotPassword").post(forgotPasswordEmail);
+
 export  default router;

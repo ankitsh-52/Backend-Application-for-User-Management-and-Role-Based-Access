@@ -1,6 +1,10 @@
 import mongoose, {Schema} from "mongoose";
 
 const profileSchema = new Schema({
+    owner : {
+        type : Schema.Types.ObjectId,
+        ref : "User"
+    },
     fullName : {
         required : true,
         type : String,
@@ -8,33 +12,32 @@ const profileSchema = new Schema({
     },
     location : {
         type : String,
+        default : "",
     },
     personalSite : {
-        type : String
+        type : String,
+        default : "",
     },
     bio : {
         type : String,
-    },
-    avatar : {
-        type : String,
-        required : true,
-    },
-    avatarPublicId : {
-        type : String,
-        required : true,
+        default : "",
     },
     twitter : {
-        type : String
+        type : String,
+        default : "",
     },
     facebook : {
-        type : String
+        type : String,
+        default : "",
     },
     linkedin: {
-        type : String
+        type : String,
+        default : "",
     },
     instagram : {
-        type : String
+        type : String,
+        default : "",
     },
 }, {timestamps : true});
 
-export const PROFILE = mongoose.model("PROFILE", profileSchema);
+export const Profile = mongoose.model("Profile", profileSchema);

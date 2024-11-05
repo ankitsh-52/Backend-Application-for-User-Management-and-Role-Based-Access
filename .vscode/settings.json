@@ -3,6 +3,7 @@
         "cloudinary",
         "deletecomment",
         "Fullname",
-        "nonvalidate"
+        "nonvalidate",
+        "personalsite"
     ]
 }

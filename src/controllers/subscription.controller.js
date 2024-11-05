@@ -4,7 +4,10 @@ import { Subscription } from "../models/subscription.model.js";
 import { ApiError } from "../utils/apiErrors.js";
 
 const toggleSubscription = asyncHandler(async(req, res) => {
+    
     let { id } = req.params;
+    // console.log("User id received for toggling check", id);
+    
     try {
         let subscribedToUser = await User.findById( {_id : id}, { password : 0, refreshToken : 0 });
         if( !subscribedToUser ) {
@@ -21,7 +24,14 @@ const toggleSubscription = asyncHandler(async(req, res) => {
         // console.log("Subscribed by User ", subscribedByUser);
 
         //check if already subscribed or not
-        let alreadySubscribed = await Subscription.findOne({ $and : [{ subscribedBy : subscribedByUser._id }, { subscribedTo : subscribedToUser._id }] });
+        let alreadySubscribed = await Subscription.findOne
+        ({$or : [
+            { $and : [{ subscribedBy : subscribedByUser._id }, { subscribedTo : subscribedToUser._id }] 
+            },
+            {
+                $and : [{ subscribedTo : subscribedByUser._id }, { subscribedBy : subscribedToUser._id }]
+            }
+        ]});
         
         if(alreadySubscribed){
             //unsubscribe logic
@@ -29,14 +39,14 @@ const toggleSubscription = asyncHandler(async(req, res) => {
                 { subscribedBy : subscribedByUser._id },
                 { subscribedTo : subscribedToUser._id }
             ]});
-            // console.log("Deleted already subscribed user", resp);
+            console.log("Deleted already subscribed user");
         } else{
             //subscribe logic
             let resp = await Subscription.create({
                 subscribedBy : subscribedByUser._id,
                 subscribedTo : subscribedToUser._id
             });
-            // console.log("Not subscribed user data added", resp);
+            console.log("Not subscribed user data added");
         }
         console.log("Subscription added check");
         return res.redirect(`/${subscribedToUser.username}`);
@@ -59,6 +69,20 @@ const getUserFollowerChannel = asyncHandler( async(req, res) => {
 const getUserFollowingChannels = asyncHandler( async(req, res) => {
     
 } )
+
+const followerFollowingToggle = asyncHandler(async(req, res) => {
+    let { id } = req.params;
+    try {
+        let subscribedToUser = await Subscription.findById(id).populate("subscribedTo", "username");
+        console.log("subscribedTo user is: ", subscribedToUser);
+        
+
+        let currUser = res.locals.currUser;
+        
+    } catch (error) {
+        
+    }
+})
 
 export {
     toggleSubscription,

@@ -1,4 +1,14 @@
 <% layout("/layouts/boilerplate") %>
+<style>
+    .forgot-password {
+        font-size: 14px;
+        margin-left: 5px;
+        color: #2d79f3;
+        font-weight: 500;
+        cursor: pointer;
+        text-decoration: none;
+    }
+</style>
 <body>
     <div class="col-4 offset-4">
         <h1>Login: </h1>
@@ -26,6 +36,13 @@
                 />
                 <div class="invalid-feedback">Please enter password</div>
             </div>
+            <!-- <div class="flex-row">
+                <a class="forgot-password" href="/user/forgotPassword">Forgot password?</a>
+            </div> -->
+            <div class="mb-3 text-end"> <!-- Aligns the link to the right -->
+                <a class="forgot-password" href="/user/forgotPassword">Forgot password?</a>
+            </div>
+        
             <button type="submit" class="btn btn-dark">Login</button>
         </form>
     </div>

@@ -12,7 +12,7 @@ const getCommentPage = asyncHandler(async(req, res) => {
     // console.log("Photo details from getCommentPage controller",photo);
     let reviews = await Comment.find({ image : id }).populate("image").populate("owner", "username");
     let totalComment = await Comment.find({ image : id }).countDocuments();
-    console.log("total Comment", totalComment);
+    // console.log("total Comment", totalComment);
     
     let currentUser = req.CheckCurrentUser; // using this to get delete edit button based on logged in or out.
 
