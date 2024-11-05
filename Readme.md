@@ -1,78 +1,61 @@
-# Backend Application for User Management and Role-Based Access
+# ProfilePix
 
 ## Overview
 
-This project is a comprehensive backend application built using Node.js, Express, and MongoDB. It showcases essential backend development skills, including user authentication, role-based access control, session management, and CRUD operations. The project is designed to demonstrate backend capabilities for a fresher position and can serve as a foundation for more advanced applications.
+ProfilePix is a social platform where users can create profiles, share images, follow other users, and interact through likes and comments. It’s built to demonstrate backend capabilities, providing secure authentication, authorization, and efficient data management.
+
 
 ## Features
 
-- **User Authentication:**
-  - Sign Up
-  - Login
-  - Logout
-  - Password Reset (via email)
+- **User Authentication**: Sign up/login, email OTP verification via Gmail.
+- **Profile Management**: User profiles display personal image galleries, followers, and following lists.
+- **Follow/Unfollow System**: Users can follow/unfollow others with real-time status updates.
+- **Image Handling**: Users can upload, delete images, with real-time like and comment options.
+- **Interactive UI**: Modals and dynamic routing enable a smooth user experience for managing connections and interactions.
+- **Error Handling**: Custom error handling provides user-friendly feedback for better experience.
 
-- **Session Management:**
-  - Secure session handling using cookies.
-  - Persistent login sessions.
-
-- **CRUD Operations:**
-  - Create, Read, Update, and Delete operations for user profiles.
-
-- **File Uploading:**
-  - Supports multi-file uploads with validation.
-  - Stores files securely and integrates with cloud storage.
-
-- **Data Validation:**
-  - Comprehensive input validation for forms (sign-up, login, etc.)
-
-- **Database Security:**
-  - Secure storage of passwords using hashing.
-
-- **API Development:**
-  - RESTful API design for user management.
-  - JSON-based API responses.
 
 ## Technology Stack
+- **Backend**:          Node.js, Express.js
+- **Database**:         MongoDB, Mongoose
+- **Authentication**:   JWT for token-based state management, Nodemailer for OTP verification
+- **Frontend**:         EJS templating engine, HTML, CSS, Bootstrap (for responsive modals and layout)
+- **Other**:            Git (version control), RESTful APIs
 
-- **Node.js**: JavaScript runtime for building scalable network applications.
-- **Express.js**: Web framework for Node.js to build the server-side application.
-- **MongoDB**: NoSQL database for storing user data and other application-related data.
-- **Mongoose**: ODM for MongoDB to interact with the database in a structured way.
-- **bcrypt**: Library for hashing passwords.
-- **jsonwebtoken**: Library for creating and verifying JSON Web Tokens (JWT) for authentication.
-- **Nodemailer**: Module for sending emails, used in the password reset feature.
-- **dotenv**: Module for managing environment variables.
 
 ### Prerequisites
+1. **Node.js** - Make sure Node.js is installed on your system. [Download Node.js](https://nodejs.org)
+2. **MongoDB** - Set up a MongoDB database locally or through MongoDB Atlas.
+3. **Gmail API Credentials** - Required for Gmail authentication and sending OTP emails.
+4. **Environment Variables** - Configure your `.env` file with the following variables:
+    `PORT`                    : 8000
+    `MONGODB_URI`             : mongodb://localhost:27017/videoTube
+    `ACCESS_TOKEN_SECRET`     :
+    `ACCESS_TOKEN_EXPIRY`     :
+    `REFRESH_TOKEN_SECRET`    :
+    `REFRESH_TOKEN_EXPIRY`    :
+    `CLOUDINARY_CLOUD_NAME`   : 
+    `CLOUDINARY_API_KEY`      : 
+    `CLOUDINARY_SECRET_KEY`   : 
+    `CLOUDINARY_SECRET_KEY`   : 
+    `CORS_ORIGIN`             : 
+    `EMAIL_HOST`              : smtp.gmail.com
+    `EMAIL_PORT`              : 465
+    `EMAIL_PASS`              :
+    `EMAIL_USER`              :
+    `EMAIL_SERVICE`           : ="gmail"
 
-- [Node.js](https://nodejs.org/) installed
-- [MongoDB](https://www.mongodb.com/) installed and running locally or on a cloud service like MongoDB Atlas
-- A GitHub account for version control and repository management
 
-### Setup
+## Getting Started
+1. **Clone the repository**: git clone
 
-1. **Clone the repository:**
+2. **Install dependencies**: npm install
 
-   ```bash
-   git clone https://github.com/your-username/your-repo-name.git
-   cd your-repo-name
+3. **Set up environment variables** in a `.env` file (see prerequisites).
 
-2. **Install dependencies::**
-    npm install
+4. **Run the application**:
+  - cd src
+  - nodemon index.js
 
-3. **Create a .env file in the root directory and add the following environment variables:**
-    - PORT=8000
-    - MONGODB_URI=
-    - ACCESS_TOKEN_SECRET=
-    - ACCESS_TOKEN_EXPIRY=1h
-    - REFRESH_TOKEN_SECRET=
-    - REFRESH_TOKEN_EXPIRY=1d
-    - CLOUDINARY_CLOUD_NAME=
-    - CLOUDINARY_API_KEY=
-    - CLOUDINARY_SECRET_KEY=
-    - CORS_ORIGIN=*
-
-4. **Run the application:**
-    cd src
-    nodemon index.js
+5. **Access the app**:
+   Open `http://localhost:port` in your browser to explore ProfilePix.
