@@ -28,22 +28,22 @@ ProfilePix is a social platform where users can create profiles, share images, f
 2. **MongoDB** - Set up a MongoDB database locally or through MongoDB Atlas.
 3. **Gmail API Credentials** - Required for Gmail authentication and sending OTP emails.
 4. **Environment Variables** - Configure your `.env` file with the following variables:
-    `PORT`                    : 8000
-    `MONGODB_URI`             : mongodb://localhost:27017/videoTube
-    `ACCESS_TOKEN_SECRET`     :
-    `ACCESS_TOKEN_EXPIRY`     :
-    `REFRESH_TOKEN_SECRET`    :
-    `REFRESH_TOKEN_EXPIRY`    :
-    `CLOUDINARY_CLOUD_NAME`   : 
-    `CLOUDINARY_API_KEY`      : 
-    `CLOUDINARY_SECRET_KEY`   : 
-    `CLOUDINARY_SECRET_KEY`   : 
-    `CORS_ORIGIN`             : 
-    `EMAIL_HOST`              : smtp.gmail.com
-    `EMAIL_PORT`              : 465
-    `EMAIL_PASS`              :
-    `EMAIL_USER`              :
-    `EMAIL_SERVICE`           : ="gmail"
+  - `PORT`                    : 8000
+  - `MONGODB_URI`             : mongodb://localhost:27017/videoTube
+  - `ACCESS_TOKEN_SECRET`     :
+  - `ACCESS_TOKEN_EXPIRY`     :
+  - `REFRESH_TOKEN_SECRET`    :
+  - `REFRESH_TOKEN_EXPIRY`    :
+  - `CLOUDINARY_CLOUD_NAME`   : 
+  - `CLOUDINARY_API_KEY`      : 
+  - `CLOUDINARY_SECRET_KEY`   : 
+  - `CLOUDINARY_SECRET_KEY`   : 
+  - `CORS_ORIGIN`             : 
+  - `EMAIL_HOST`              : smtp.gmail.com
+  - `EMAIL_PORT`              : 465
+  - `EMAIL_PASS`              :
+  - `EMAIL_USER`              :
+  - `EMAIL_SERVICE`           : ="gmail"
 
 
 ## Getting Started
