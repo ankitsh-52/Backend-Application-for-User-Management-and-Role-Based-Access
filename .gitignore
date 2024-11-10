@@ -9,3 +9,5 @@ checkIfLoggedOut.middleware
 docker_demo
 buttons
 public.zip
+imageUploadedSuccessfully.ejs
+errorModal.html

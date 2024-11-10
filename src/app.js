@@ -19,8 +19,6 @@ const __dirname = path.dirname(__filename);
 // Set the view engine to ejs
 app.set("view engine", "ejs");
 app.engine( "ejs", ejsMate );
-// Define the location of the views folder
-// app.set("views", path.join(__dirname, "views"));
 
 //? MIDDLEWARES
 app.use(cors({  //TODO understand cors.

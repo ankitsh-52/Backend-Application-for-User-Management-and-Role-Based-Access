@@ -1,48 +1,43 @@
 <% layout("/layouts/boilerplate") %>
-<body>
-    <div class="col-8 offset-2">
-        <form 
-        action="/image" 
-        method="post" 
-        class="needs-validation" 
-        novalidate 
-        enctype="multipart/form-data"
-        >
-            <div class="mb-3">
-                <label for="title" class="form-label">Title</label>
-                <input 
-                    type="text" 
-                    placeholder="Enter image title" 
-                    name="title"
-                    class="form-control"
-                    required
-                    />
-                <div class="invalid-feedback">Title is required</div>
-            </div>
 
-            <div class="mb-3">
-                <label for="description" class="form-label">Description</label>
-                <input 
-                    type="text" 
-                    placeholder="Enter image description" 
-                    name="description"
-                    class="form-control"
-                    required
-                    />
-                <div class="invalid-feedback">Description is required</div>
-            </div>
+    <body>
+        <div class="col-8 offset-2">
+            <form action="/image" method="post" class="needs-validation" novalidate enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="title" class="form-label">Title</label>
+                    <input type="text" placeholder="Enter image title" name="title" class="form-control" required />
+                    <div class="invalid-feedback">Title is required</div>
+                </div>
 
-            <div class="mb-3 ">
-                <label for="image" class="form-label">Select Image</label>
-                <input 
-                type="file" 
-                name="image"
-                class="form-control"
-                required
-                />
-                <div class="invalid-feedback">Please select an image</div>
-            </div>
-            <button type="submit" class="btn btn-dark ">Upload Image</button>
-        </form>
-    </div>
-</body>
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <input type="text" placeholder="Enter image description" name="description" class="form-control"
+                        required />
+                    <div class="invalid-feedback">Description is required</div>
+                </div>
+
+                <div class="mb-3 ">
+                    <label for="image" class="form-label">Select Image</label>
+                    <input type="file" name="image" class="form-control" required />
+                    <div class="invalid-feedback">Please select an image</div>
+                </div>
+                <button type="submit" class="btn btn-dark ">Upload Image</button>
+            </form>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get("upload") === "success") {
+                Swal.fire({
+                    title: "Image Upload",
+                    text: "Image uploaded successfully!",
+                    icon: "success",
+                    //timer: 2000,
+                    //showConfirmButton: false
+                });
+                const newUrl = window.location.href.replace(/[?&]upload=success/, '');
+                window.history.replaceState(null, '', newUrl);
+            }
+        </script>
+    </body>

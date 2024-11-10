@@ -45,10 +45,10 @@ const uploadImage = asyncHandler( async(req, res) => {
         let { statusCode, message } = new ApiError ( 500, "Error while image uploading" );
         res.render( "error.ejs", { statusCode, message } );
     }
-    return res.json(
-        new ApiResponse(200, "Image Uploaded Successfully")
-    )
-    // res.redirect("/currentUser");
+    // return res.json(
+    //     new ApiResponse(200, "Image Uploaded Successfully")
+    // )
+    return res.redirect("/image?upload=success");
 });
 
 // const userPhotosView = asyncHandler( async(req, res) => {
@@ -93,12 +93,15 @@ const deleteImage = asyncHandler(async(req, res) => {
         // console.log("Response for delete: ", resp);
         let cloudinaryResp = await deleteOnCloudinary(image.imagePublicId);
         // console.log("Cloudinary destroy method response", cloudinaryResp);
-        res.status(200).send('Image deleted successfully');
+        // res.status(200).send('Image deleted successfully');
+        return res.redirect("/?delete=success");
     } catch (error) {
         res.status(500).send('Error deleting image');
     }
+});
 
-    //todo image delete redirect.
+const imageUploadSuccessfully = asyncHandler(async(req, res) => {
+    res.render("imageUploadedSuccessfully.ejs");
 })
 
 export {
@@ -106,5 +109,6 @@ export {
     uploadImage,
     userPhotos,
     deleteImage,
+    imageUploadSuccessfully,
 }
 

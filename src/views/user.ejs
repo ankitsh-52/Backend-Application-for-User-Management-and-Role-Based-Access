@@ -17,7 +17,8 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"     
         integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-</head>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    </head>
 <body>
     <%- include("./includes/navbar2.ejs") %>
 
@@ -428,6 +429,53 @@
             
         })
 
+    </script>
+    <script>
+        // Check if the URL has "login=success" in the query parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get("login") === "success") {
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 2500,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+                }
+            });
+            Toast.fire({
+                icon: "success",
+                title: "Signed in successfully"
+            });
+            const loginUrl = window.location.href;
+            const newUrl = loginUrl.replace(/[?&]login=success/, '');
+            window.history.replaceState(null, '', newUrl);
+        }
+
+        const urlParams2 = new URLSearchParams(window.location.search);
+        const message = urlParams2.get("message");
+        if(message === 'already_logged_in'){
+            const Toast = Swal.mixin({
+                toast: true,
+                position: "top-end",
+                showConfirmButton: false,
+                timer: 2500,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                toast.onmouseenter = Swal.stopTimer;
+                toast.onmouseleave = Swal.resumeTimer;
+                }
+            });
+            Toast.fire({
+                icon: "success",
+                title: "Already signed in"
+            });
+            const alreadyLoggedInUrl = window.location.href;
+            const newUrl = alreadyLoggedInUrl.replace(/[?&]message=already_logged_in/, '');
+            window.history.replaceState(null, '', newUrl);
+        }
     </script>
 </body>
 </html>

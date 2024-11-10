@@ -156,7 +156,7 @@ const registerUser = asyncHandler(async(req, res) => {
         //TODO understand its use, 2 status codes.
         // res.render("registration", { user } );
         // res.redirect("/otp")
-        res.redirect("login");
+        res.redirect("login?message=registered_successfully");
         // return res.status(201).json(
         //     new ApiResponse( 200, createdUser, "User registered successfully" )
         // )
@@ -280,6 +280,9 @@ const logInPage = asyncHandler(async(req, res) => {
 });
 
 const loginUser = asyncHandler( async ( req, res ) => {
+    if(res.locals.currUser){
+        return res.redirect("/currentUser?message=already_logged_in");
+    }
     /* 1. username or email
     2. find the user
     3. password & matching using isPasswordCorrect mongoose MW
@@ -331,7 +334,7 @@ const loginUser = asyncHandler( async ( req, res ) => {
     return res
     .cookie( "accessToken", accessToken, options )  //Here the res can access the cookie as we have injected the cookie-parser MW.
     .cookie ( "refreshToken", refreshToken, options )
-    .redirect("/currentUser")
+    .redirect("/currentUser?login=success")
     // .json (
     //     new ApiResponse (
     //         200,
@@ -459,7 +462,7 @@ document, it's not strictly necessary, but it's often used to ensure the functio
     .clearCookie( "accessToken", options )
     .clearCookie( "refreshToken", options )
     // .json( new ApiResponse( 200, {}, "User logged out successfully" ) );
-    .redirect("/login")
+    .redirect("/login?logout=success")
 });
 
 const refreshAccessToken = asyncHandler( async( req, res ) => {

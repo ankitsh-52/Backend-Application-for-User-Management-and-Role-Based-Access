@@ -1,49 +1,83 @@
 <% layout("/layouts/boilerplate") %>
-<style>
-    .forgot-password {
-        font-size: 14px;
-        margin-left: 5px;
-        color: #2d79f3;
-        font-weight: 500;
-        cursor: pointer;
-        text-decoration: none;
-    }
-</style>
-<body>
-    <div class="col-4 offset-4">
-        <h1>Login: </h1>
+    <style>
+        .forgot-password {
+            font-size: 14px;
+            margin-left: 5px;
+            color: #2d79f3;
+            font-weight: 500;
+            cursor: pointer;
+            text-decoration: none;
+        }
+    </style>
 
-        <form action="/login" method="post" class="needs-validation" novalidate>
-            <div class="mb-3">
-                <label for="username" class="form-label">Username</label>
-                <input 
-                type="text" 
-                placeholder="Enter username or email" 
-                name="username"
-                class="form-control"
-                required
-                />
-                <div class="invalid-feedback">Please enter username or email</div>
-            </div>
-            <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
-                <input 
-                type="password" 
-                name="password" 
-                placeholder="Enter password" 
-                class="form-control"
-                required
-                />
-                <div class="invalid-feedback">Please enter password</div>
-            </div>
-            <!-- <div class="flex-row">
-                <a class="forgot-password" href="/user/forgotPassword">Forgot password?</a>
-            </div> -->
-            <div class="mb-3 text-end"> <!-- Aligns the link to the right -->
-                <a class="forgot-password" href="/user/forgotPassword">Forgot password?</a>
-            </div>
-        
-            <button type="submit" class="btn btn-dark">Login</button>
-        </form>
-    </div>
-</body>
+    <body>
+        <div class="col-4 offset-4">
+            <h1>Login: </h1>
+
+            <form action="/login" method="post" class="needs-validation" novalidate>
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" placeholder="Enter username or email" name="username" class="form-control"
+                        required />
+                    <div class="invalid-feedback">Please enter username or email</div>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" name="password" placeholder="Enter password" class="form-control" required />
+                    <div class="invalid-feedback">Please enter password</div>
+                </div>
+                <div class="mb-3 text-end"> <!-- Aligns the link to the right -->
+                    <a class="forgot-password" href="/user/forgotPassword">Forgot password?</a>
+                </div>
+                <button type="submit" class="btn btn-dark">Login</button>
+            </form>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script>
+            // Check if the URL has "logout=success" in the query parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            if(urlParams.get("logout") === "success"){
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 2500, // Increase the time slightly to ensure visibility
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.onmouseenter = Swal.stopTimer;
+                        toast.onmouseleave = Swal.resumeTimer;
+                    }
+                });
+                Toast.fire({
+                    icon: "info",
+                    title: "Signed out successfully"
+                });
+                const loggedOutUrl = window.location.href;
+                const newUrl = loggedOutUrl.replace(/[?&]logout=success/, '');
+                window.history.replaceState(null, '', newUrl);
+            }
+
+            //!-- const urlParams2 = new URLSearchParams(window.location.search); -->
+            if(urlParams.get("message") === "registered_successfully"){
+                const Toast = Swal.mixin({
+                    toast: true,
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 2500, // Increase the time slightly to ensure visibility
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                        toast.onmouseenter = Swal.stopTimer;
+                        toast.onmouseleave = Swal.resumeTimer;
+                    }
+                });
+                Toast.fire({
+                    icon: "info",
+                    title: "Registered successfully"
+                });
+                const registeredUrl = window.location.href;
+                const newUrl = registeredUrl.replace(/[?&]message=registered_successfully/, '');
+                window.history.replaceState(null, '', newUrl);
+            }
+        </script>
+    </body>

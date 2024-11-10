@@ -48,7 +48,7 @@ router.route("/register").post(upload.fields
 router.use(currentUserCheck);   //! TO GET USER LOGGED IN OR NOT INFORMATION.
 
 router.route("/login").get( logInPage);
-router.route("/login").post( loginUser); 
+router.route("/login").post(currentUserCheck, loginUser); 
 router.route("/currentUser").get(verifyJWT, getCurrentUser);
 router.route( "/user/logout" ).post( verifyJWT, logoutUser );
 router.route( "/refresh-token" ).post( refreshAccessToken );    //todo
