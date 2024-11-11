@@ -291,18 +291,22 @@ const loginUser = asyncHandler( async ( req, res ) => {
     6. successful log in
     */
 
-    const { email, username, password } = req.body;
-    if( !( username || email ) )
+    const { username, password } = req.body;
+    if( !( username ) )
     {
         // throw new ApiError ( 400, "username or email is required" );
         let { statusCode, message } = new ApiError ( 400, "username or email is required" );
-        res.render( "error.ejs", { statusCode, message } );
+        return res.render( "error.ejs", { statusCode, message } );
     }
-
-    const userExist = await User.findOne( { $or : [ { email }, { username } ] } );
+    const userExist = await User.findOne({ 
+        $or : [ 
+            {username : username},
+            {email : username} 
+        ]
+    });
     // console.log("*****", userExist);
     if( !userExist ) {
-        let { statusCode, message } = new ApiError ( 404, "User doesn't exists" );
+        let { statusCode, message } = new ApiError ( 404, "User not found" );
         return res.render( "error.ejs", { statusCode, message } );
     };
 
@@ -311,7 +315,7 @@ const loginUser = asyncHandler( async ( req, res ) => {
     if( !isPasswordValid ) {
         // throw new ApiError ( 401, "Password incorrect" );
         let { statusCode, message } = new ApiError ( 401, "Password Incorrect" );
-        res.render( "error.ejs", { statusCode, message } );
+        return res.render( "error.ejs", { statusCode, message } );
     };
 
     const { accessToken, refreshToken } =  await generateAccessAndRefreshTokens ( userExist._id ); // Here await is used as inside this method DB operations are happening.
