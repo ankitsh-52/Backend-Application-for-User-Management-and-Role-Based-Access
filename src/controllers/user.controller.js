@@ -156,7 +156,7 @@ const registerUser = asyncHandler(async(req, res) => {
         //TODO understand its use, 2 status codes.
         // res.render("registration", { user } );
         // res.redirect("/otp")
-        res.redirect("login?message=registered_successfully");
+        return res.redirect("login?message=registered_successfully");
         // return res.status(201).json(
         //     new ApiResponse( 200, createdUser, "User registered successfully" )
         // )

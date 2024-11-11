@@ -76,7 +76,6 @@ const followerFollowingToggle = asyncHandler(async(req, res) => {
         let subscribedToUser = await Subscription.findById(id).populate("subscribedTo", "username");
         console.log("subscribedTo user is: ", subscribedToUser);
         
-
         let currUser = res.locals.currUser;
         
     } catch (error) {
