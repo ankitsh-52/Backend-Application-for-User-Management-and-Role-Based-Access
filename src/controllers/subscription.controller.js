@@ -4,10 +4,8 @@ import { Subscription } from "../models/subscription.model.js";
 import { ApiError } from "../utils/apiErrors.js";
 
 const toggleSubscription = asyncHandler(async(req, res) => {
-    
     let { id } = req.params;
     // console.log("User id received for toggling check", id);
-    
     try {
         let subscribedToUser = await User.findById( {_id : id}, { password : 0, refreshToken : 0 });
         if( !subscribedToUser ) {
@@ -24,14 +22,12 @@ const toggleSubscription = asyncHandler(async(req, res) => {
         // console.log("Subscribed by User ", subscribedByUser);
 
         //check if already subscribed or not
-        let alreadySubscribed = await Subscription.findOne
-        ({$or : [
-            { $and : [{ subscribedBy : subscribedByUser._id }, { subscribedTo : subscribedToUser._id }] 
-            },
-            {
-                $and : [{ subscribedTo : subscribedByUser._id }, { subscribedBy : subscribedToUser._id }]
-            }
-        ]});
+        let alreadySubscribed = await Subscription.findOne({
+            $and : [
+                {subscribedTo : subscribedToUser._id},
+                {subscribedBy : subscribedByUser._id}
+            ]
+        });
         
         if(alreadySubscribed){
             //unsubscribe logic
@@ -57,34 +53,84 @@ const toggleSubscription = asyncHandler(async(req, res) => {
     }
 });
 
-const getUserFollowerChannel = asyncHandler( async(req, res) => {
-    let user = req.user;
-    console.log("Checking subscription user", user);
-    if(user){
-        let followerData = await Subscription.find({ subscribedTo : user._id }, { subscribedBy : 1 }).countDocuments({ subscribedTo : user._id });
-        console.log("User Follower data: ", followerData);
-    }
-} );
-
-const getUserFollowingChannels = asyncHandler( async(req, res) => {
+const removeFollower = asyncHandler(async(req, res) => {
+    let removingFollowerId= req.params.id;
+    // console.log("removingFollowerId", removingFollowerId);
     
-} )
-
-const followerFollowingToggle = asyncHandler(async(req, res) => {
-    let { id } = req.params;
-    try {
-        let subscribedToUser = await Subscription.findById(id).populate("subscribedTo", "username");
-        console.log("subscribedTo user is: ", subscribedToUser);
-        
-        let currUser = res.locals.currUser;
-        
-    } catch (error) {
-        
+    if(!removingFollowerId){
+        let { statusCode, message } = new ApiError ( 201, "User Not Found" );
+        return res.render( "error.ejs", { statusCode, message } );
     }
-})
+    try {
+        let currUser = req.user;
+        // console.log("currUser", currUser._id, currUser.username);
+        
+        let followerData = await Subscription.findOne({
+            $and : [
+                {subscribedBy : removingFollowerId},
+                {subscribedTo : currUser._id}
+            ]
+        });
+        if(!followerData){
+            let { statusCode, message } = new ApiError ( 201, "User Not Found" );
+            return res.render( "error.ejs", { statusCode, message } );
+        }
+        else{
+            let resp = await Subscription.deleteOne({
+                $and : [
+                    {subscribedTo : currUser._id},
+                    {subscribedBy : removingFollowerId}
+                ]
+            })
+            console.log("Follower user removed result", resp);
+        }
+        return res.redirect("/currentUser");
+    } catch (error) {
+        let { statusCode, message } = new ApiError ( 500, "Internal server error" );
+        return res.render( "error.ejs", { statusCode, message } );
+    }
+});
+
+const unFollowFollowingUser = asyncHandler(async(req, res) => {
+    let unfollowId = req.params.id;
+    console.log("Unfollowing user id", unfollowId);
+
+    if(!unfollowId){
+        let { statusCode, message } = new ApiError ( 201, "User Not Found" );
+        return res.render( "error.ejs", { statusCode, message } );
+    }
+    try {
+        let currentUser = req.user;
+        let followingUserData = await Subscription.findOne({
+            $and : [
+                {subscribedBy : currentUser._id},
+                {subscribedTo : unfollowId}
+            ]
+        })
+        // console.log("followingUserData", followingUserData);
+
+        if(!followingUserData){
+            let { statusCode, message } = new ApiError ( 201, "User Not Found" );
+            return res.render( "error.ejs", { statusCode, message } );
+        }
+        else{
+            let resp = await Subscription.deleteOne({
+                $and : [
+                    {subscribedBy : currentUser._id},
+                    {subscribedTo : unfollowId}
+                ]
+            })
+            console.log("Successfully unfolowed the user", resp);
+        }
+        return res.redirect("/currentUser");
+    } catch (error) {
+        let { statusCode, message } = new ApiError ( 500, "Internal server error" );
+        return res.render( "error.ejs", { statusCode, message } );
+    }
+});
 
 export {
     toggleSubscription,
-    getUserFollowingChannels,
-    getUserFollowerChannel
+    removeFollower,
+    unFollowFollowingUser
 }

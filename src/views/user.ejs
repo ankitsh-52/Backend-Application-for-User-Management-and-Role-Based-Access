@@ -70,9 +70,9 @@
                                 </button>
                             </div>
                         <% } %>
-                    <% } else { %>
+                    <% } else { %>  <!--* CURRENT USER -->
                         <!--! logged in user follower & following list -->
-                        <div class="d-flex">    
+                        <div class="d-flex">
                             <!--* FOLLOWERS BUTTON -->
                             <button type="button" class="btn btn-outline-dark mx-2 squared-pill d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#exampleModal-1">
                                 Followers(<%= followersData.length %>)
@@ -87,8 +87,8 @@
                 <% } %>
             </form>
 
-            <!--**! logged in user FOLLOWERS MODAL -->
             <% if(currUser) { %>
+                <!--**! logged in user FOLLOWERS MODAL -->
                 <div class="modal fade" id="exampleModal-1" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                         <div class="modal-content">
@@ -100,18 +100,16 @@
                                 <div class="list-group">
                                     <!--* FOLLOWER DATA & REMOVE BUTTON-->
                                     <% for(let follower of followersData) { %>
-                                        <!-- Wrap content in d-flex to align username and button in the same row -->
                                         <div class="list-group-item d-flex justify-content-between align-items-center">
                                             <!--* USERNAME -->
-                                            <a href="/<%= follower.subscribedBy.username %>" style="text-decoration: none;">
+                                            <a href="/<%= follower.subscribedBy.username %>" style="text-decoration: none; color: black;">
                                                 <i class="fa-solid fa-circle-user fa-lg"></i>&nbsp;
                                                 <b>@<%= follower.subscribedBy.username %></b>
-                                                <h6><%= follower.subscribedBy._id %></h6>
                                             </a>
-    
+
                                             <!--* REMOVE BUTTON -->
                                             <% if( currUser._id.toString() === user._id.toString() ) { %>
-                                                <form action="/user/toggleFollow/<%= follower.subscribedBy._id %>" method="POST">                                            <form action="/user/toggleFollow/<%= user._id %>" method="POST">
+                                                <form action="/<%= follower.subscribedBy._id %>/removeFollower?_method=DELETE" method="POST">                                            <form action="/user/toggleFollow/<%= user._id %>" method="POST">
                                                     <button class="btn btn-outline-dark squared-pill d-flex align-items-center" type="submit">
                                                         Remove
                                                 </form>
@@ -139,23 +137,22 @@
                                 <div class="list-group">
                                     <!--* FOLLOWING DATA -->
                                     <% for(let following of followingData) { %>
-                                        <!-- Wrap content in d-flex to align username and button in the same row -->
                                         <div class="list-group-item d-flex justify-content-between align-items-center">
                                             <!--* USERNAME -->
-                                            <a href="/<%= following.subscribedTo.username %>" style="text-decoration: none;">
+                                            <a href="/<%= following.subscribedTo.username %>" style="text-decoration: none; color: black;">
                                                 <i class="fa-solid fa-circle-user fa-lg"></i>&nbsp;<b>@<%= following.subscribedTo.username %></b>
                                             </a>
-            
+
                                             <!--* UNFOLLOW BUTTON -->
                                             <!-- <button class="btn btn-outline-dark squared-pill d-flex align-items-center">
                                                 Unfollow
                                             </button> -->
-                                            <% if( currUser.username.toString() === user.username.toString() ) { %>
-                                                <!-- <form action="/user/toggleFollow/<%= user._id %>" method="POST">                                            <form action="/user/toggleFollow/<%= user._id %>" method="POST"> -->
+                                            <% if( currUser._id.toString() === user._id.toString() ) { %>
+                                                <form action="/<%= following.subscribedTo._id %>/unfollowFollowing?_method=DELETE" method="POST">
                                                     <button class="btn btn-outline-dark squared-pill d-flex align-items-center" type="submit">
                                                         Unfollow
                                                     </button>
-                                                <!-- </form> -->
+                                                </form>
                                             <% } %>
                                         </div>
                                     <% } %>
@@ -200,7 +197,7 @@
                                         <!-- Wrap content in d-flex to align username and button in the same row -->
                                         <div class="list-group-item d-flex justify-content-between align-items-center">
                                             <!--* USERNAME -->
-                                            <a href="/<%= follower.subscribedBy.username %>" style="text-decoration: none;">
+                                            <a href="/<%= follower.subscribedBy.username %>" style="text-decoration: none; color: black;">
                                                 <i class="fa-solid fa-circle-user fa-lg"></i>&nbsp;
                                                 <b>@
                                                     <% if( follower.subscribedBy?.username ) { %>
@@ -245,7 +242,7 @@
                                         <!-- Wrap content in d-flex to align username and button in the same row -->
                                         <div class="list-group-item d-flex justify-content-between align-items-center">
                                             <!--* USERNAME -->
-                                            <a href="/<%= following.subscribedTo.username %>" style="text-decoration: none;">
+                                            <a href="/<%= following.subscribedTo.username %>" style="text-decoration: none; color: black;">
                                                 <i class="fa-solid fa-circle-user fa-lg"></i>&nbsp;<b>@<%= following.subscribedTo.username %></b>
                                             </a>
             

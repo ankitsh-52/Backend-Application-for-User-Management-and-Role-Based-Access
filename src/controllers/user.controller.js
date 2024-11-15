@@ -408,13 +408,13 @@ const publicProfilePage = asyncHandler(async(req, res) => {
     if(user){
         followersData = await Subscription.find( { subscribedTo : user._id }, { subscribedBy : 1 } ).populate("subscribedBy", "username");
     }
-    console.log(res.locals.currUser.username, "Followers Data**", followersData);
+    // console.log(res.locals.currUser.username, "Followers Data**", followersData);
 
     let followingData = [];
     if(user){
         followingData = await Subscription.find( { subscribedBy : user._id }, { subscribedTo : 1 } ).populate("subscribedTo", "username");
     }
-    console.log(res.locals.currUser.username, "Following Data@@", followingData);
+    // console.log(res.locals.currUser.username, "Following Data@@", followingData);
 
     let profileData = await Profile.findOne({ owner : user._id })
     // console.log("Profile data from publicProfilePage: ", profileData);
